@@ -1,15 +1,64 @@
 {
-  "name": "podcast-app",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start"
-  },
-  "dependencies": {
-    "next": "9.0.5",
-    "react": "16.9.0",
-    "react-dom": "16.9.0"
-  }
+	"name": "podcast-app",
+	"version": "0.1.0",
+	"description": "A simple app for browsing the iTunes podcast directory",
+	"private": true,
+	"repository": "git@github.com:CMessinides/podcast-app.git",
+	"author": "Cameron Messinides <cameron.messinides@gmail.com>",
+	"license": "MIT",
+	"scripts": {
+		"dev": "next dev",
+		"build": "next build",
+		"start": "next start"
+	},
+	"husky": {
+		"hooks": {
+			"commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+			"pre-commit": "lint-staged"
+		}
+	},
+	"lint-staged": {
+		"*.{js,jsx}": [
+			"eslint --fix",
+			"prettier --write",
+			"jest --bail --findRelatedTests",
+			"git add"
+		],
+		"*.json": [
+			"prettier --write",
+			"git add"
+		]
+	},
+	"dependencies": {
+		"apollo-server-micro": "^2.9.3",
+		"classnames": "^2.2.6",
+		"dotenv": "^8.1.0",
+		"graphql": "^14.5.4",
+		"next": "9.0.5",
+		"pg": "^7.12.1",
+		"react": "16.9.0",
+		"react-dom": "16.9.0"
+	},
+	"devDependencies": {
+		"@commitlint/config-conventional": "^8.1.0",
+		"@fullhuman/postcss-purgecss": "^1.2.0",
+		"@testing-library/react": "^9.1.4",
+		"@zeit/next-css": "^1.0.1",
+		"autoprefixer": "^9.6.1",
+		"commitlint": "^8.1.0",
+		"eslint": "^6.3.0",
+		"eslint-plugin-jest": "^22.17.0",
+		"eslint-plugin-react": "^7.14.3",
+		"husky": "^3.0.5",
+		"jest": "^24.9.0",
+		"lint-staged": "^9.2.5",
+		"next-purgecss": "^3.1.1",
+		"postcss-preset-env": "^6.7.0",
+		"prettier": "^1.18.2",
+		"prop-types": "^15.7.2",
+		"purgecss": "^1.4.0",
+		"standard-version": "^7.0.0",
+		"tailwindcss": "^1.1.2",
+		"webpack": "^4.39.3"
+	}
 }
