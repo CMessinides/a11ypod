@@ -52,6 +52,7 @@ function UserMenu({ user }) {
 					className="h-6 inline rounded-full"
 					src={user.picture}
 					alt={`${isOpen ? "Close" : "Open"} user navigation`}
+					style={{ boxShadow: "0 0 0 2px #fff" }}
 				/>
 			</button>
 			<div
