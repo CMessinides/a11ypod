@@ -1,0 +1,37 @@
+.button {
+	@apply inline-block font-medium leading-none py-2 px-3 rounded text-xs tracking-wider uppercase;
+}
+
+.button--primary {
+	@apply bg-purple-700 text-white;
+}
+
+.button--primary:hover,
+.button--primary:focus,
+.button--primary:active {
+	@apply bg-purple-800;
+}
+
+.button--primary.button--inverse {
+	@apply bg-white text-purple-700;
+}
+
+.button--primary.button--inverse:hover,
+.button--primary.button--inverse:focus,
+.button--primary.button--inverse:active {
+	@apply bg-purple-100;
+}
+
+.button--secondary {
+	@apply bg-gray-300 text-gray-700;
+}
+
+.button--secondary:hover,
+.button--secondary:focus,
+.button--secondary:active {
+	@apply bg-gray-400;
+}
+
+.button--lg {
+	@apply text-sm py-3 px-4;
+}

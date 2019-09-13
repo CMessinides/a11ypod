@@ -1,18 +1,10 @@
 {
-  "presets": [
-    [
-      "next/babel",
-      {
-        "preset-env": { "targets": { "node": "current" } }
-      }
-    ]
-  ],
-  "plugins": [
-    ["babel-plugin-inline-import", {
-      "extensions": [
-        ".sql",
-        ".graphql"
-      ]
-    }]
-  ]
+	"presets": [
+		[
+			"next/babel",
+			{
+				"preset-env": { "targets": { "node": "current" } }
+			}
+		]
+	]
 }
