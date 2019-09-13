@@ -1,0 +1,11 @@
+.button {
+	@apply font-medium leading-none py-2 px-3 rounded text-xs tracking-wider uppercase;
+}
+
+.button--primary {
+	@apply bg-purple-700 text-white;
+}
+
+.button--primary.button--inverse {
+	@apply bg-white text-purple-700;
+}
