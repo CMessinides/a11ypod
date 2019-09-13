@@ -22,7 +22,7 @@ function NavBar({ user }) {
 						<NavLink href="/search">Search</NavLink>
 					</li>
 					<li className="flex-grow">
-						<NavLink href="/playlist">Playlist</NavLink>
+						<NavLink href="/playlist">Your List</NavLink>
 					</li>
 				</ul>
 			</nav>

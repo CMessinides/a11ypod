@@ -27,11 +27,11 @@ class App extends NextApp {
 	render() {
 		const { Component, ...otherProps } = this.props;
 		return (
-			<div>
+			<div className="h-full flex flex-col">
 				<NavBar user={this.state.user} />
-				<div>
+				<main className="flex-grow">
 					<Component {...otherProps} user={this.state.user} />
-				</div>
+				</main>
 			</div>
 		);
 	}
