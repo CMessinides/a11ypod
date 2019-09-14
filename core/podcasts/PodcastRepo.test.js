@@ -2,6 +2,9 @@ import PodcastRepo from "./PodcastRepo";
 
 jest.mock("isomorphic-unfetch");
 import fetch from "isomorphic-unfetch";
+import { createFetchMocks } from "../test-helpers";
+const { mockFetchResolve } = createFetchMocks(fetch);
+
 import searchNbaResults from "./__fixtures__/search-nba.json";
 import searchNbaResultsWithOffset from "./__fixtures__/search-nba-w-offset.json";
 import searchNbaResultsLimit11 from "./__fixtures__/search-nba-limit-11.json";
@@ -10,7 +13,7 @@ describe("search", () => {
 	it("should return podcasts matching the search term", async () => {
 		expect.assertions(2);
 
-		mockFetchOk(searchNbaResults);
+		mockFetchResolve({ json: searchNbaResults });
 		const search = await PodcastRepo.search("nba");
 
 		expect(search).toMatchSnapshot();
@@ -24,7 +27,7 @@ describe("search", () => {
 	it("should accept an optional offset", async () => {
 		expect.assertions(2);
 
-		mockFetchOk(searchNbaResultsWithOffset);
+		mockFetchResolve({ json: searchNbaResultsWithOffset });
 		const search = await PodcastRepo.search("nba", { offset: 25 });
 
 		expect(search.startIndex).toBe(25);
@@ -37,7 +40,7 @@ describe("search", () => {
 		expect.assertions(2);
 
 		// We mock a response with 11 results...
-		mockFetchOk(searchNbaResultsLimit11);
+		mockFetchResolve({ json: searchNbaResultsLimit11 });
 		// ...but ask for only 10.
 		const search = await PodcastRepo.search("nba", { limit: 10 });
 
@@ -52,7 +55,7 @@ describe("search", () => {
 		expect.assertions(2);
 
 		// We again mock a response with 11 results...
-		mockFetchOk(searchNbaResultsLimit11);
+		mockFetchResolve({ json: searchNbaResultsLimit11 });
 		// ...but this time we ask for more.
 		const search = await PodcastRepo.search("nba", { limit: 15 });
 
@@ -64,10 +67,3 @@ describe("search", () => {
 });
 
 describe("find", () => {});
-
-function mockFetchOk(json) {
-	fetch.mockResolvedValueOnce({
-		ok: true,
-		json: () => Promise.resolve(json)
-	});
-}
