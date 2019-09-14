@@ -1,5 +1,6 @@
 const { URLSearchParams } = require("url");
-const fetch = require("isomorphic-unfetch");
+const NetworkRequest = require("../network/NetworkRequest");
+const InternalServerError = require("../errors/InternalServerError");
 
 const BASE_URL = "https://itunes.apple.com";
 
@@ -28,15 +29,19 @@ module.exports = {
 		);
 
 		const url = BASE_URL + `/search?${params}`;
-		const response = await (await fetch(url)).json();
+		const request = new NetworkRequest(url);
+		const response = await request.get();
+		if (!request.succeeded) {
+			throw new InternalServerError(request.error);
+		}
+		const data = await response.json();
+
 		// As noted above, if we did not receive limit + 1 results, then there
 		// are no more results to fetch.
-		const isEndOfResults = response.results.length !== limit + 1;
+		const isEndOfResults = data.results.length !== limit + 1;
 		// If we are *not* at the end of results, remove the last result from the list,
 		// since we needed it only to peek at the next page.
-		const results = !isEndOfResults
-			? response.results.slice(0, -1)
-			: response.results;
+		const results = !isEndOfResults ? data.results.slice(0, -1) : data.results;
 		/** @type {PodcastSearchResults} */
 		return {
 			startIndex: offset,

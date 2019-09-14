@@ -1,9 +1,10 @@
 import PodcastRepo from "./PodcastRepo";
+import InternalServerError from "../errors/InternalServerError";
 
 jest.mock("isomorphic-unfetch");
 import fetch from "isomorphic-unfetch";
 import { createFetchMocks } from "../test-helpers";
-const { mockFetchResolve } = createFetchMocks(fetch);
+const { mockFetchResolve, mockFetchReject } = createFetchMocks(fetch);
 
 import searchNbaResults from "./__fixtures__/search-nba.json";
 import searchNbaResultsWithOffset from "./__fixtures__/search-nba-w-offset.json";
@@ -20,7 +21,8 @@ describe("search", () => {
 		expect(fetch).toHaveBeenLastCalledWith(
 			expect.stringContaining(
 				"https://itunes.apple.com/search?term=nba&entity=podcast"
-			)
+			),
+			expect.anything()
 		);
 	});
 
@@ -32,7 +34,8 @@ describe("search", () => {
 
 		expect(search.startIndex).toBe(25);
 		expect(fetch).toHaveBeenLastCalledWith(
-			expect.stringContaining("offset=25")
+			expect.stringContaining("offset=25"),
+			expect.anything()
 		);
 	});
 
@@ -63,6 +66,21 @@ describe("search", () => {
 		// no more pages of results.
 		expect(search.nextOffset).toBe(null);
 		expect(search.results.length).toBe(11);
+	});
+
+	it("should throw if the network request fails", () => {
+		mockFetchReject();
+		expect(PodcastRepo.search("nba")).rejects.toBeInstanceOf(
+			InternalServerError
+		);
+
+		mockFetchResolve({
+			status: 404,
+			statusText: "Not Found"
+		});
+		expect(PodcastRepo.search("nba")).rejects.toBeInstanceOf(
+			InternalServerError
+		);
 	});
 });
 

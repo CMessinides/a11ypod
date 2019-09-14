@@ -16,7 +16,7 @@ it.each([["get"], ["put"], ["post"], ["delete"]])(
 
 		await new NetworkRequest(url)[method]();
 		expect(fetch).toHaveBeenLastCalledWith(
-			new URL(url),
+			url,
 			expect.objectContaining({ method: method.toUpperCase() })
 		);
 	}
@@ -31,10 +31,7 @@ it("should allow custom configuration", async () => {
 
 	await new NetworkRequest(url).set(config).get();
 
-	expect(fetch).toHaveBeenLastCalledWith(
-		new URL(url),
-		expect.objectContaining(config)
-	);
+	expect(fetch).toHaveBeenLastCalledWith(url, expect.objectContaining(config));
 });
 
 it("should forward same-site request cookies if provided", () => {

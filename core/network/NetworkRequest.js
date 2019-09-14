@@ -10,14 +10,14 @@ class NetworkRequest {
 	 * request. This should only be present on the server.
 	 */
 	constructor(url, { req } = {}) {
-		this.url = new URL(url);
+		this.url = url;
 		/** @type {RequestInit} */
 		this.config = {
 			headers: {}
 		};
 
 		// Forward cookies from the initiating request if the request is same-site
-		if (req && req.headers.host === this.url.host) {
+		if (req && req.headers.host === new URL(this.url).host) {
 			this.config.headers.Cookie = req.headers.cookie;
 		}
 
