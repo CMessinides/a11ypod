@@ -33,7 +33,7 @@ function setupAuth(server) {
 	// sent to the server when Auth0 redirects the user to the /callback
 	// route. See https://github.com/auth0/passport-auth0/issues/70#issuecomment-480771614
 	// for more details.
-	isDev && server.set("trust proxy", 1);
+	!isDev && server.set("trust proxy", 1);
 
 	// Set up authentication through Auth0
 	const passport = require("passport");
