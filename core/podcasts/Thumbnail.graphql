@@ -1,0 +1,6 @@
+type Thumbnail {
+	w30: String!
+	w60: String!
+	w100: String!
+	w600: String!
+}
