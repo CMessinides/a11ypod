@@ -1,0 +1,4 @@
+input PodcastSearchParams {
+	offset: Int
+	limit: Int
+}

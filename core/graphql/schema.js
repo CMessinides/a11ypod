@@ -16,12 +16,20 @@ function requireGraphql(filename) {
 const Podcast = requireGraphql("../podcasts/Podcast.graphql");
 const Publisher = requireGraphql("../podcasts/Publisher.graphql");
 const Thumbnail = requireGraphql("../podcasts/Thumbnail.graphql");
+const PodcastSearchResults = requireGraphql(
+	"../podcasts/PodcastSearchResults.graphql"
+);
+const PodcastSearchParams = requireGraphql(
+	"../podcasts/PodcastSearchParams.graphql"
+);
 const Query = requireGraphql("./Query.graphql");
 
 module.exports = gql`
 	${Podcast}
 	${Publisher}
 	${Thumbnail}
+	${PodcastSearchResults}
+	${PodcastSearchParams}
 
 	${Query}
 `;

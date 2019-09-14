@@ -1,0 +1,5 @@
+type PodcastSearchResults {
+	startIndex: Int!
+	nextOffset: Int
+	results: [Podcast]!
+}
