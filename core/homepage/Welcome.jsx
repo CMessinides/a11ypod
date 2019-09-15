@@ -17,9 +17,9 @@ export default function Welcome() {
 					channels and save episodes to listen later.
 				</EmptyState.Blurb>
 				<EmptyState.Actions>
-					<LoginButton className="button--lg m-1">Get started</LoginButton>
+					<LoginButton className="button--lg">Get started</LoginButton>
 					<Link href="/search">
-						<a className="button button--secondary button--lg m-1">
+						<a className="button button--secondary button--lg">
 							Browse podcasts
 						</a>
 					</Link>

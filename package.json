@@ -48,6 +48,7 @@
 		"pg": "^7.12.1",
 		"react": "16.9.0",
 		"react-dom": "16.9.0",
+		"react-feather": "^2.0.3",
 		"uid-safe": "^2.1.5"
 	},
 	"devDependencies": {

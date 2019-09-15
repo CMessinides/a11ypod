@@ -15,7 +15,7 @@ function Playlist({ user }) {
 					started.
 				</EmptyState.Blurb>
 				<EmptyState.Actions>
-					<LoginButton className="button--lg m-1">Get Started</LoginButton>
+					<LoginButton className="button--lg">Get Started</LoginButton>
 				</EmptyState.Actions>
 			</EmptyState>
 		);

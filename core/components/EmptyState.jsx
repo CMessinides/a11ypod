@@ -2,11 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 
 function EmptyState({ children }) {
-	return (
-		<div className="h-full flex flex-col justify-center text-center max-w-2xl px-3 py-12 sm:px-6 mx-auto">
-			{children}
-		</div>
-	);
+	return <div className="page page--centered py-12">{children}</div>;
 }
 
 EmptyState.propTypes = {
@@ -14,7 +10,7 @@ EmptyState.propTypes = {
 };
 
 EmptyState.Heading = function EmptyStateHeading({ children }) {
-	return <h1 className="text-3xl font-bold leading-tight">{children}</h1>;
+	return <h1 className="page__title">{children}</h1>;
 };
 
 EmptyState.Heading.propTypes = {
@@ -22,7 +18,7 @@ EmptyState.Heading.propTypes = {
 };
 
 EmptyState.Blurb = function EmptyStateBlurb({ children }) {
-	return <p className="mt-8 text-gray-700 text-lg">{children}</p>;
+	return <p className="page__blurb mt-8">{children}</p>;
 };
 
 EmptyState.Blurb.propTypes = {
@@ -32,7 +28,11 @@ EmptyState.Blurb.propTypes = {
 EmptyState.Actions = function EmptyStateActions({ children }) {
 	return (
 		<div className="mt-8">
-			<div className="flex flex-wrap justify-center -m-1">{children}</div>
+			<div className="flex flex-wrap justify-center -m-1">
+				{React.Children.map(children, child => (
+					<div className="m-1">{child}</div>
+				))}
+			</div>
 		</div>
 	);
 };

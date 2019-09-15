@@ -1,0 +1,27 @@
+.page {
+	@apply h-full flex flex-col max-w-2xl p-3 mx-auto;
+}
+
+@screen sm {
+	.page {
+		@apply p-6;
+	}
+}
+
+@screen md {
+	.page {
+		@apply py-12;
+	}
+}
+
+.page--centered {
+	@apply justify-center text-center;
+}
+
+.page__title {
+	@apply text-3xl font-bold leading-tight;
+}
+
+.page__blurb {
+	@apply text-gray-700 text-lg;
+}
