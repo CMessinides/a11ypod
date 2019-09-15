@@ -1,5 +1,5 @@
 import PodcastRepo from "./PodcastRepo";
-import InternalServerError from "../errors/InternalServerError";
+import { InternalServerError } from "../errors";
 
 jest.mock("isomorphic-unfetch");
 import fetch from "isomorphic-unfetch";

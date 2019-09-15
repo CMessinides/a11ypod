@@ -1,11 +1,11 @@
 import NetworkRequest from "./NetworkRequest";
-import { ResponseError } from "./errors";
+import { NetworkError, ResponseError, InternalServerError } from "../errors";
 
 jest.mock("isomorphic-unfetch");
 import fetch from "isomorphic-unfetch";
 import { createFetchMocks } from "../test-helpers";
 const { mockFetchResolve, mockFetchReject } = createFetchMocks(fetch);
-fetch.mockResolvedValue({ ok: true });
+mockFetchResolve({ once: false });
 
 const url = "https://example.com";
 
@@ -59,27 +59,21 @@ it("should forward same-site request cookies if provided", () => {
 it("should fail if fetch throws an error", async () => {
 	expect.assertions(3);
 
-	const error = new Error("Network error");
-	mockFetchReject({ reason: error });
+	mockFetchReject({ reason: new Error("Any old error") });
 
 	const request = new NetworkRequest(url);
 	const response = await request.get();
 
 	// The request should mark itself as failed.
 	expect(request.succeeded).toBe(false);
-	expect(request.error).toBe(error);
+	expect(request.error).toBeInstanceOf(NetworkError);
 	expect(response).toBe(null);
 });
 
-it("should fail if the response is not OK", async () => {
-	expect.assertions(5);
+it("should fail if the response status is not OK", async () => {
+	expect.assertions(4);
 
-	// Mock a Not Found response
-	const fetchResponse = {
-		status: 404,
-		statusText: "Not Found"
-	};
-	mockFetchResolve(fetchResponse);
+	mockFetchResolve({ status: 404 });
 
 	const request = new NetworkRequest(url);
 	const response = await request.get();
@@ -87,8 +81,7 @@ it("should fail if the response is not OK", async () => {
 	// The request should mark itself as failed...
 	expect(request.succeeded).toBe(false);
 	expect(request.error).toBeInstanceOf(ResponseError);
-	expect(request.error.message).toBe(fetchResponse.statusText);
-	expect(request.error.extensions.status).toBe(fetchResponse.status);
+	expect(request.error.extensions.response).toStrictEqual(response);
 	// ...but the response should still be provided.
 	expect(response).not.toBe(null);
 });
@@ -112,11 +105,11 @@ it("should allow a custom strategy to determine success", async () => {
 	// Here's an example strategy that checks whether the JSON response contains
 	// an errors field (e.g. in the case of a failed GraphQL request) and fails
 	// the request if it does. Note that this strategy does not need to check
-	// whether the response is OK (`response.ok`) or, even more tedious,
+	// whether the response is not OK (`response.ok`) or, even more tedious,
 	// whether fetch threw an error. The default NetworkRequest error handling
-	// will still mark this request as failed; this strategy is just another
-	// check on top of that. And inversely, if a strategy wants to un-fail
-	// a request for some reason, that's possible, too.
+	// will still mark this request as failed in those cases; this strategy
+	// is just another check on top of that. And inversely, if a strategy wants
+	// to un-fail a request for some reason, that's possible, too.
 	const strategy = {
 		checkResponse: async (request, response) => {
 			const { errors } = await response.json();
@@ -150,4 +143,37 @@ it("should allow a custom strategy to determine success", async () => {
 	// The request should now be successful
 	expect(request.succeeded).toBe(true);
 	expect(request.error).toBe(null);
+});
+
+it("should allow a custom strategy for processing errors", async () => {
+	// Here's an example strategy that logs the actual error, then returns an
+	// InternalServerError. This is useful in, say, a backend service where we
+	// want to know what went wrong, but we don't want to expose those details
+	// to the client.
+	const fakeLog = () => {};
+	const customError = new InternalServerError();
+	const strategy = {
+		onError: error => {
+			fakeLog(error);
+			return customError;
+		}
+	};
+
+	// The error handler should be called if fetch throws an error
+	mockFetchReject({ reason: new Error("Fetch failed") });
+	const request = new NetworkRequest(url).use(strategy);
+	await request.get();
+
+	// Normally, request.error would just be an instance of NetworkError
+	expect(request.error).toBe(customError);
+
+	// Clear the error in preparation for the second part of the test
+	request.succeed();
+
+	// The error handler should also be called in the case of a bad response
+	mockFetchResolve({ status: 404 });
+	await request.get();
+
+	// Normally, request.error would be an instance of ResponseError
+	expect(request.error).toBe(customError);
 });

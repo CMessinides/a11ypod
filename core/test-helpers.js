@@ -17,6 +17,9 @@ export function createFetchMocks(fetch = jest.fn()) {
 				text: () => (text instanceof Promise ? text : Promise.resolve(text)),
 				get ok() {
 					return this.status >= 200 && this.status < 300;
+				},
+				clone() {
+					return Object.assign({}, this);
 				}
 			});
 

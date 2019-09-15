@@ -1,8 +1,12 @@
 const { URLSearchParams } = require("url");
 const NetworkRequest = require("../network/NetworkRequest");
-const InternalServerError = require("../errors/InternalServerError");
+const { InternalServerError } = require("../errors/");
 
 const BASE_URL = "https://itunes.apple.com";
+
+const itunesStrategy = {
+	onError: error => new InternalServerError(error)
+};
 
 module.exports = {
 	/**
@@ -29,11 +33,9 @@ module.exports = {
 		);
 
 		const url = BASE_URL + `/search?${params}`;
-		const request = new NetworkRequest(url);
+		const request = new NetworkRequest(url).use(itunesStrategy);
 		const response = await request.get();
-		if (!request.succeeded) {
-			throw new InternalServerError(request.error);
-		}
+		if (!request.succeeded) throw request.error;
 		const data = await response.json();
 
 		// As noted above, if we did not receive limit + 1 results, then there

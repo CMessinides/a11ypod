@@ -1,7 +1,21 @@
 const fetch = require("isomorphic-unfetch");
-const { ResponseError } = require("./errors");
+const merge = require("lodash/merge");
+const { NetworkError, ResponseError } = require("../errors");
 
 class NetworkRequest {
+	/**
+	 * The default response handler for network requests. Called before any
+	 * custom handlers registered through `use()`.
+	 * @param {NetworkRequest} request
+	 * @param {Response} response
+	 */
+	static async checkResponse(request, response) {
+		if (!response.ok) {
+			request.fail(new ResponseError(response.statusText, { response }));
+		} else {
+			request.succeed();
+		}
+	}
 	/**
 	 * Create a new network request for a URL
 	 * @param {string} url
@@ -25,8 +39,18 @@ class NetworkRequest {
 		this.succeeded = false;
 		this.error = null;
 
-		/** @type {ResponseHandler[]} */
-		this.responseHandlers = [];
+		/**
+		 * Holds any custom response handlers registered through `use()`.
+		 * @type {ResponseHandler[]} */
+		this.responseHandlers = [
+			// Add the default response handler first
+			NetworkRequest.checkResponse
+		];
+
+		/**
+		 * Holds any custom error processors registered through `use()`.
+		 * @type {ErrorProcessor[]} */
+		this.errorProcessors = [];
 	}
 
 	/**
@@ -42,6 +66,9 @@ class NetworkRequest {
 				case "checkResponse":
 					this.responseHandlers.push(handler);
 					break;
+				case "onError":
+					this.errorProcessors.push(handler);
+					break;
 			}
 		}
 
@@ -55,10 +82,7 @@ class NetworkRequest {
 	 * @returns {NetworkRequest}
 	 */
 	set(options = {}) {
-		this.config = {
-			...this.config,
-			...options
-		};
+		this.config = merge(this.config, options);
 
 		return this;
 	}
@@ -71,7 +95,7 @@ class NetworkRequest {
 	 */
 	fail(reason) {
 		this.succeeded = false;
-		this.error = reason;
+		this.error = this.processError(reason);
 		return this;
 	}
 
@@ -104,21 +128,13 @@ class NetworkRequest {
 			response = await fetch(this.url, this.config);
 		} catch (e) {
 			// Fail and return early if fetch errors
-			this.fail(e);
+			this.fail(new NetworkError(e.message));
 			return null;
 		}
 
-		// Fail and return early if the response is not OK
-		if (!response.ok) {
-			this.fail(
-				new ResponseError(response.statusText, { status: response.status })
-			);
-			return response;
-		}
-
-		this.succeed();
-
+		// Check the response to fail or succeed
 		await this.checkResponse(response);
+
 		return response;
 	}
 
@@ -156,8 +172,24 @@ class NetworkRequest {
 	 */
 	async checkResponse(response) {
 		for (const handle of this.responseHandlers) {
-			await handle(this, response);
+			// We clone the response here every time so that each handler receives a
+			// fresh response with readable body and methods like `text()`, `json()`,
+			// and so on.
+			await handle(this, response.clone());
 		}
+	}
+
+	/**
+	 * Process the error with any registered error processors and return the
+	 * result.
+	 * @param {Error} error
+	 */
+	processError(error) {
+		for (const process of this.errorProcessors) {
+			error = process(error);
+		}
+
+		return error;
 	}
 
 	/**
@@ -181,10 +213,20 @@ module.exports = NetworkRequest;
  * receives a response from fetch. This method is called after NetworkRequest
  * has already completed its default response handling. If fetch throws an
  * error, this method will not be called.
+ * @property {ErrorProcessor} onError - Called when the NetworkRequest
+ * encounters an error anywhere in its lifecycle. This method is responsible
+ * for optionally transforming the error and returning it for assignment
+ * to the NetworkRequest.
  */
 
 /**
  * Validates the response and optionally marks the request as succeeded or
  * failed if certain conditions are met.
  * @typedef {(request: NetworkRequest, response: Response) => Promise<any>} ResponseHandler
+ */
+
+/**
+ * Receives any error encountered by the request and optionally transforms it
+ * before returning it to the request.
+ * @typedef {(error: Error) => Error} ErrorProcessor
  */
