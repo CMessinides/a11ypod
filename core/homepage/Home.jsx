@@ -1,17 +1,15 @@
 import React from "react";
-import PropTypes from "prop-types";
 import Welcome from "./Welcome";
+import { useStoreState } from "easy-peasy";
 
-function Home({ user }) {
+function Home() {
+	const user = useStoreState(state => state.users.currentUser);
+
 	if (user) {
 		return <div>You are logged in!</div>;
 	}
 
 	return <Welcome />;
 }
-
-Home.propTypes = {
-	user: PropTypes.object
-};
 
 export default Home;

@@ -1,11 +1,13 @@
 import React from "react";
-import PropTypes from "prop-types";
 import Link from "next/link";
 import NavLink from "./NavLink";
 import UserMenu from "./UserMenu";
 import LoginButton from "../auth/LoginButton";
+import { useStoreState } from "easy-peasy";
 
-function NavBar({ user }) {
+function NavBar() {
+	const user = useStoreState(state => state.users.currentUser);
+
 	return (
 		<header className="bg-purple-700 text-white shadow-lg leading-none flex flex-wrap items-baseline sm:flex-no-wrap">
 			<Link href="/">
@@ -36,9 +38,5 @@ function NavBar({ user }) {
 		</header>
 	);
 }
-
-NavBar.propTypes = {
-	user: PropTypes.object
-};
 
 export default NavBar;

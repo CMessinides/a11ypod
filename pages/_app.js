@@ -1,38 +1,53 @@
 import React from "react";
 import NextApp from "next/app";
 import NavBar from "../core/nav/Navbar";
+import { getOrCreateStore } from "../core/store";
+import { StoreProvider } from "easy-peasy";
 
 import "../core/styles/index.css";
 
 class App extends NextApp {
 	static async getInitialProps({ ctx, Component }) {
-		const initialProps = await super.getInitialProps({ ctx, Component });
+		ctx.store = getOrCreateStore();
+
 		if (ctx.req && ctx.req.isAuthenticated()) {
-			// With more time, I would transform the raw user data from Auth0
-			// into a flat object with only the attriutes needed by this app:
-			// name, id, and profile picture. But for our purposes, this works
-			// just fine.
-			initialProps.user = ctx.req.user;
+			const { user } = ctx.req;
+			const { users } = ctx.store.getActions();
+			ctx.store.dispatch(
+				users.login({
+					id: user.id,
+					picture: user.picture,
+					name: user.name.givenName || user.displayName
+				})
+			);
 		}
-		return initialProps;
+
+		const pageProps = await super.getInitialProps({ ctx, Component });
+
+		return {
+			...pageProps,
+			initialState: ctx.store.getState()
+		};
 	}
 
 	constructor(props) {
 		super(props);
-		this.state = {
-			user: props.user
-		};
+		console.log({ props });
+		this.store = getOrCreateStore(props.initialState);
+		console.log({ state: this.store.getState() });
 	}
 
 	render() {
-		const { Component, ...otherProps } = this.props;
+		const { Component, pageProps } = this.props;
 		return (
-			<div className="h-full flex flex-col">
-				<NavBar user={this.state.user} />
-				<main className="flex-grow">
-					<Component {...otherProps} user={this.state.user} />
-				</main>
-			</div>
+			<StoreProvider store={this.store}>
+				<div className="h-full flex flex-col">
+					<NavBar />
+					<main className="flex-grow">
+						<Component {...pageProps} />
+					</main>
+				</div>
+			</StoreProvider>
 		);
 	}
 }

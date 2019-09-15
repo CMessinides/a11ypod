@@ -1,9 +1,11 @@
 import React from "react";
-import PropTypes from "prop-types";
 import EmptyState from "../components/EmptyState";
 import LoginButton from "../auth/LoginButton";
+import { useStoreState } from "easy-peasy";
 
-function Playlist({ user }) {
+function Playlist() {
+	const user = useStoreState(state => state.users.currentUser);
+
 	if (user) {
 		return <div>This is your list!</div>;
 	} else {
@@ -21,9 +23,5 @@ function Playlist({ user }) {
 		);
 	}
 }
-
-Playlist.propTypes = {
-	user: PropTypes.object
-};
 
 export default Playlist;

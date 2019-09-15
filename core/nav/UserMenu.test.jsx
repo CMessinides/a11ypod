@@ -6,10 +6,8 @@ import UserMenu from "./UserMenu";
 afterEach(cleanup);
 
 const user = {
-	name: {
-		givenName: "Cameron"
-	},
-	displayName: "Cameron",
+	id: "user123",
+	name: "Cameron",
 	picture: "https://img.users.com/cameron.jpg"
 };
 

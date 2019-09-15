@@ -1,3 +1,7 @@
+import React from "react";
+import StoreModel from "./store/StoreModel";
+import { StoreProvider, createStore as createEasyPeasyStore } from "easy-peasy";
+
 export function createFetchMocks(fetch = jest.fn()) {
 	const mocks = {
 		fetch,
@@ -41,4 +45,16 @@ export function createFetchMocks(fetch = jest.fn()) {
 	mocks.mockFetchReject = mocks.mockFetchReject.bind(mocks);
 
 	return mocks;
+}
+
+export function createStore({ initialState } = {}) {
+	const store = createEasyPeasyStore(StoreModel, { initialState });
+	return {
+		store,
+		StoreProvider,
+		// eslint-disable-next-line react/prop-types
+		Container({ children }) {
+			return <StoreProvider store={store}>{children}</StoreProvider>;
+		}
+	};
 }

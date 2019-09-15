@@ -28,4 +28,9 @@ function Search() {
 	);
 }
 
+Search.getInitialProps = async ctx => {
+	console.log(ctx);
+	return {};
+};
+
 export default Search;
