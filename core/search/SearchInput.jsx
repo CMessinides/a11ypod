@@ -5,8 +5,9 @@ import { Search } from "react-feather";
 function SearchInput({
 	id,
 	value,
+	name = "q",
 	placeholder = "Search",
-	label = "Search",
+	label = "Search term",
 	onChange = () => {}
 }) {
 	return (
@@ -21,6 +22,7 @@ function SearchInput({
 			></Search>
 			<input
 				id={id}
+				name={name}
 				type="text"
 				placeholder={placeholder}
 				onChange={onChange}
@@ -35,6 +37,7 @@ function SearchInput({
 SearchInput.propTypes = {
 	id: PropTypes.string.isRequired,
 	label: PropTypes.string,
+	name: PropTypes.string,
 	placeholder: PropTypes.string,
 	onChange: PropTypes.func,
 	value: PropTypes.string

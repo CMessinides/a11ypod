@@ -33,6 +33,26 @@ it("should format and send a GraphQL query", async () => {
 	);
 });
 
+it("should accept and attach optional variables", async () => {
+	expect.assertions(1);
+
+	const query = `query { hello }`;
+	const variables = { limit: 1 };
+	mockFetchResolve({ json: { data: {} } });
+
+	await Client.query(query, { variables });
+
+	expect(fetch).toHaveBeenCalledWith(
+		Client.ENDPOINT,
+		expect.objectContaining({
+			body: JSON.stringify({
+				query,
+				variables
+			})
+		})
+	);
+});
+
 it("should throw an error if fetch rejects", () => {
 	mockFetchReject({ reason: new Error("failed to fetch") });
 

@@ -8,7 +8,8 @@ const {
 	InternalServerError
 } = require("../errors");
 
-const ENDPOINT = BASE_URL + "/api/v1/graphql";
+const apiRoute = "/api/v1/graphql";
+const ENDPOINT = BASE_URL ? BASE_URL + apiRoute : apiRoute;
 
 /**
  * Normalize an error returned by the GraphQL service.
@@ -83,10 +84,13 @@ const GraphqlClient = {
 	 * @param {RequestInit} context.config Additional options for the network
 	 * request. Note that the 'Accept: application/json' and 'Content-Type:
 	 * application/json' headers will always be set and cannot be overridden.
+	 * @param {Object} context.variables Optional variables to send with the
+	 * GraphQL query.
 	 * @returns {Promise<Object>}
 	 */
-	async query(query, { req, config } = {}) {
+	async query(query, { req, config, variables } = {}) {
 		// Configure the request for a GraphQL
+		console.log("inside client query!");
 		const request = new NetworkRequest(ENDPOINT, { req })
 			.use(graphqlStrategy)
 			.set(config)
@@ -95,10 +99,12 @@ const GraphqlClient = {
 					Accept: "application/json",
 					"Content-Type": "application/json"
 				},
-				body: JSON.stringify({ query })
+				body: JSON.stringify({ query, variables })
 			});
 
 		const response = await request.post();
+
+		console.log("dumping network request", request);
 
 		if (request.error) throw request.error;
 

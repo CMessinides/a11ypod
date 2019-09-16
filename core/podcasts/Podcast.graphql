@@ -4,6 +4,6 @@ type Podcast {
 	genre: String!
 	publisher: Publisher!
 	iTunesUrl: String!
-	feedUrl: String!
+	feedUrl: String
 	thumbnail: Thumbnail!
 }

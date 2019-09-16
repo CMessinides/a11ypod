@@ -127,6 +127,7 @@ class NetworkRequest {
 		try {
 			response = await fetch(this.url, this.config);
 		} catch (e) {
+			console.log("error in network request", { e, request: this });
 			// Fail and return early if fetch errors
 			this.fail(new NetworkError(e.message));
 			return null;
