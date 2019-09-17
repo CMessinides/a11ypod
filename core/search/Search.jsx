@@ -167,7 +167,14 @@ function Search() {
 									{results.length === 1 ? "result" : "results"} for &ldquo;
 									{term}&rdquo;
 								</div>
-								<CardStack className="-mx-3" aria-label="Search results">
+								<aside className="bg-yellow-300 text-sm p-3 sm:px-6 -mx-3 sm:-mx-6">
+									<strong>🚧 Links to podcasts are coming soon.</strong> For
+									now, search results do not link anywhere else.
+								</aside>
+								<CardStack
+									className="-mx-3 sm:-mx-6"
+									aria-label="Search results"
+								>
 									{results.map(podcast => (
 										<PodcastPreview key={podcast.id} {...podcast} />
 									))}

@@ -10,12 +10,15 @@ function NavBar() {
 
 	return (
 		<header className="bg-purple-700 text-white shadow-lg leading-none flex flex-wrap items-baseline sm:flex-no-wrap">
+			<a href="#main" className="button order-2 sr-only focus:not-sr-only">
+				Skip navigation
+			</a>
 			<Link href="/">
 				<a className="p-3 order-1 font-bold text-lg sm:py-0 sm:px-6">
 					Castaway
 				</a>
 			</Link>
-			<nav className="text-center ml-auto w-full order-3 sm:order-2 sm:w-auto">
+			<nav className="text-center ml-auto w-full order-4 sm:order-3 sm:w-auto">
 				<ul className="flex">
 					<li className="flex-grow">
 						<NavLink href="/">Home</NavLink>
@@ -28,7 +31,7 @@ function NavBar() {
 					</li>
 				</ul>
 			</nav>
-			<div className="ml-auto mr-3 order-2 sm:order-3 sm:mx-6">
+			<div className="ml-auto mr-3 order-3 sm:order-4 sm:mx-6">
 				{user ? (
 					<UserMenu user={user} />
 				) : (

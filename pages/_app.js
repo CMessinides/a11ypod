@@ -43,7 +43,7 @@ class App extends NextApp {
 			<StoreProvider store={this.store}>
 				<div className="h-full flex flex-col">
 					<NavBar />
-					<main className="flex-grow">
+					<main id="main" className="flex-grow">
 						<Component {...pageProps} />
 					</main>
 				</div>
