@@ -14,10 +14,10 @@ query SearchPodcasts($term: String!, $limit: Int, $offset: Int) {
 			iTunesUrl
 			feedUrl
 			thumbnail {
-				w30
-				w60
-				w100
-				w600
+				_30w
+				_60w
+				_100w
+				_600w
 			}
 		}
 	}

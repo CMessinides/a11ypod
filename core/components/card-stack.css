@@ -1,0 +1,15 @@
+.card-stack {
+	@apply shadow;
+	@apply -mx-3;
+}
+
+@screen sm {
+	.card-stack {
+		@apply -mx-6;
+	}
+}
+
+.card-stack__item + .card-stack__item {
+	@apply border-t;
+	@apply border-gray-300;
+}

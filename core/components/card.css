@@ -1,0 +1,14 @@
+.card {
+	@apply bg-white;
+	@apply p-3;
+}
+
+@screen sm {
+	.card {
+		@apply p-6;
+	}
+}
+
+.card--standalone {
+	@apply shadow;
+}

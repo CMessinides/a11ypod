@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
-import SearchInput from "./SearchInput";
 import { useFetch, IfPending, IfFulfilled, IfRejected } from "react-async";
+import uniqBy from "lodash/fp/uniqBy";
+import SearchInput from "./SearchInput";
+import CardStack from "../components/CardStack";
+import PodcastPreview from "../podcasts/PodcastPreview";
 import { graphqlEndpoint } from "../env";
 import { InternalServerError } from "../errors";
 
@@ -32,9 +35,15 @@ const INITIAL_DATA = {
 function unwrap({ data, errors }) {
 	return {
 		data: data && data.searchPodcasts,
-		error: errors && errors[0]
+		error:
+			errors && new Error(`${errors[0].extensions.code}: ${errors[0].message}`)
 	};
 }
+
+/**
+ * Keep only unique podcasts
+ */
+const dedupe = uniqBy("id");
 
 /**
  * Intercepts actions dispatched by `react-async`'s `useFetch()` hook to
@@ -46,9 +55,8 @@ function unwrap({ data, errors }) {
  *   the current search term. This happens when the user requests more results
  *   for the same term, in which case we don't want to blow away the existing
  *   results. Therefore, we check whether the old term and new term match, and
- *   if they do, we append the new results to the old.
- *
- *   TODO: Dedupe results when appending...duplicate results are bad UX.
+ *   if they do, we append the new results to the old. Repeated results are
+ *   removed.
  * @type {import("react-async").AsyncOptions<SearchResults>["reducer"]}
  */
 const reducer = (state, action, internalReducer) => {
@@ -63,7 +71,7 @@ const reducer = (state, action, internalReducer) => {
 				newAction.payload = Object.assign(
 					data,
 					data.term === state.data.term && {
-						results: [...state.data.results, ...data.results]
+						results: dedupe([...state.data.results, ...data.results])
 					}
 				);
 			}
@@ -159,13 +167,11 @@ function Search() {
 									{results.length === 1 ? "result" : "results"} for &ldquo;
 									{term}&rdquo;
 								</div>
-								<ul className="-mx-3" aria-label="Search results">
+								<CardStack className="-mx-3" aria-label="Search results">
 									{results.map(podcast => (
-										<li key={podcast.id} className="p-3 bg-white">
-											{podcast.title}
-										</li>
+										<PodcastPreview key={podcast.id} {...podcast} />
 									))}
-								</ul>
+								</CardStack>
 							</>
 						);
 					} else {

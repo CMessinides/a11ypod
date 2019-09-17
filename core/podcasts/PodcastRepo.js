@@ -102,10 +102,10 @@ module.exports = {
 					iTunesUrl: result.collectionViewUrl,
 					feedUrl: result.feedUrl,
 					thumbnail: {
-						w30: result.artworkUrl30,
-						w60: result.artworkUrl60,
-						w100: result.artworkUrl100,
-						w600: result.artworkUrl600
+						_30w: result.artworkUrl30,
+						_60w: result.artworkUrl60,
+						_100w: result.artworkUrl100,
+						_600w: result.artworkUrl600
 					}
 				};
 			})
@@ -146,10 +146,10 @@ module.exports = {
 /**
  * Represents a thumbnail at four different resolutions
  * @typedef {Object} Thumbnail
- * @property {string} w30 - A link to the thumbnail that is 30 pixels square
- * @property {string} w60 - A link to the thumbnail that is 60 pixels square
- * @property {string} w100 - A link to the thumbnail that is 100 pixels square
- * @property {string} w600 - A link to the thumbnail that is 600 pixels square
+ * @property {string} _30w - A link to the thumbnail that is 30 pixels square
+ * @property {string} _60w - A link to the thumbnail that is 60 pixels square
+ * @property {string} _100w - A link to the thumbnail that is 100 pixels square
+ * @property {string} _600w - A link to the thumbnail that is 600 pixels square
  */
 
 /**
