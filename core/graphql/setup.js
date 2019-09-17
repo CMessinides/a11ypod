@@ -1,4 +1,5 @@
 const { ApolloServer } = require("apollo-server-express");
+const AbortController = require("abort-controller");
 const typeDefs = require("./schema");
 const resolvers = require("./resolvers");
 const { isDev } = require("../env");
@@ -13,6 +14,15 @@ function setupGraphql(server, { endpoint = "/api/v1/graphql" } = {}) {
 	const graphqlServer = new ApolloServer({
 		typeDefs,
 		resolvers,
+		context: ({ req }) => {
+			const abortController = new AbortController();
+			const { signal } = abortController;
+			req.on("close", () => {
+				console.log("aborted in context!");
+				abortController.abort();
+			});
+			return { signal };
+		},
 		playground: isDev,
 		debug: !isDev
 	});

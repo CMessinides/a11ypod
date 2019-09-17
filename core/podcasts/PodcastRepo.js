@@ -1,12 +1,40 @@
 const { URLSearchParams } = require("url");
-const NetworkRequest = require("../network/NetworkRequest");
+const fetch = require("isomorphic-unfetch");
+const AbortController = require("abort-controller");
 const { InternalServerError } = require("../errors/");
 
 const BASE_URL = "https://itunes.apple.com";
 
-const itunesStrategy = {
-	onError: error => new InternalServerError(error)
-};
+function createRequest(url, { signal: externalSignal }) {
+	const abortController = new AbortController();
+	const { signal } = abortController;
+
+	if (externalSignal) {
+		externalSignal.addEventListener("abort", () => {
+			console.log("aborted by external signal!");
+			abortController.abort();
+		});
+	}
+
+	let shouldErrorOnAbort = false;
+	return async function() {
+		setTimeout(() => {
+			shouldErrorOnAbort = true;
+			console.log("aborted by timeout!");
+			abortController.abort();
+		}, 3000);
+
+		try {
+			return await (await fetch(url, { signal })).json();
+		} catch (e) {
+			if (e.name === "AbortError") {
+				console.log("aborted", e);
+				if (!shouldErrorOnAbort) return;
+			}
+			throw new InternalServerError(e);
+		}
+	};
+}
 
 module.exports = {
 	/**
@@ -15,9 +43,10 @@ module.exports = {
 	 * @param {Object} [options={}]
 	 * @param {number} [options.offset=0] - The number of results to skip. Defaults to 0.
 	 * @param {number} [options.limit=25] - The maximum number of results to return. Defaults to 25.
+	 * @param {AbortSignal} [options.signal] - A signal to abort the request to the iTunes API
 	 * @returns {Promise<PodcastSearchResults>}
 	 */
-	async search(term, { offset = 0, limit = 25 } = {}) {
+	async search(term, { signal, offset = 0, limit = 25 } = {}) {
 		const params = new URLSearchParams(
 			Object.assign(
 				{
@@ -33,10 +62,8 @@ module.exports = {
 		);
 
 		const url = BASE_URL + `/search?${params}`;
-		const request = new NetworkRequest(url).use(itunesStrategy);
-		const response = await request.get();
-		if (!request.succeeded) throw request.error;
-		const data = await response.json();
+		const fetchResults = createRequest(url, { signal });
+		const data = await fetchResults();
 
 		// As noted above, if we did not receive limit + 1 results, then there
 		// are no more results to fetch.
@@ -46,6 +73,7 @@ module.exports = {
 		const results = !isEndOfResults ? data.results.slice(0, -1) : data.results;
 		/** @type {PodcastSearchResults} */
 		return {
+			term,
 			startIndex: offset,
 			nextOffset: isEndOfResults ? null : limit + offset,
 			results: results.map(result => {
@@ -104,7 +132,8 @@ module.exports = {
 /**
  * Represents the results of a podcast search
  * @typedef {Object} PodcastSearchResults
- * @property {number} startIndex - The index of the first result included. This is equivalent to the `offset` parameter passed to the iTunes search API.
- * @property {number} nextOffset - The offset to send for the next page of results. If there are no more results to fetch, this is set to null.
- * @property {Podcast[]} results - The podcasts returned by the search
+ * @property {string} term The search term submitted in the request for the results.
+ * @property {number} startIndex The index of the first result included. This is equivalent to the `offset` parameter passed to the iTunes search API.
+ * @property {number} nextOffset The offset to send for the next page of results. If there are no more results to fetch, this is set to null.
+ * @property {Podcast[]} results The podcasts returned by the search
  */

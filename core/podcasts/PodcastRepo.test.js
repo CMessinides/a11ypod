@@ -10,6 +10,8 @@ import searchNbaResults from "./__fixtures__/search-nba.json";
 import searchNbaResultsWithOffset from "./__fixtures__/search-nba-w-offset.json";
 import searchNbaResultsLimit11 from "./__fixtures__/search-nba-limit-11.json";
 
+jest.useFakeTimers();
+
 describe("search", () => {
 	it("should return podcasts matching the search term", async () => {
 		expect.assertions(2);

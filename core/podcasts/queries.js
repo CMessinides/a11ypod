@@ -9,9 +9,11 @@ const PodcastRepo = require("./PodcastRepo");
  * @param {Object} arguments.params - The search parameters
  * @param {number} [arguments.params.offset] - The number of results to skip
  * @param {number} [arguments.params.limit] - The maximum number of results to return
+ * @param {Object} context
+ * @param {AbortSignal} [context.signal] - A signal to abort the search request
  */
-function searchPodcasts(parent, { q, params }) {
-	return PodcastRepo.search(q, params);
+function searchPodcasts(parent, { q, params }, { signal }) {
+	return PodcastRepo.search(q, { ...params, signal });
 }
 
 module.exports = {

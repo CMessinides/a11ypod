@@ -1,5 +1,6 @@
 query SearchPodcasts($term: String!, $limit: Int, $offset: Int) {
 	searchPodcasts(q: $term, params: { limit: $limit, offset: $offset }) {
+		term
 		startIndex
 		nextOffset
 		results {

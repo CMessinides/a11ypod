@@ -1,67 +1,110 @@
 import React, { useState, useEffect } from "react";
 import SearchInput from "./SearchInput";
-import { useStoreActions } from "easy-peasy";
-import { useAsync } from "react-async";
+import { useFetch, IfPending, IfFulfilled, IfRejected } from "react-async";
+import { graphqlEndpoint } from "../env";
+import { InternalServerError } from "../errors";
 
-async function fetchResults([search, term, offset = 0], { signal }) {
-	console.log("fetching results!", { term });
-	try {
-		const data = await search({ variables: { term, offset }, signal });
-		console.log("got data", { data, term });
-		return { ...data, term };
-	} catch (e) {
-		console.log("error in fetchResults", e);
-		throw e;
-	}
-	// console.log("fetched results", { ...data, term });
+import query from "../podcasts/SearchQuery.graphql";
+
+function createQuery(term) {
+	return JSON.stringify({
+		query,
+		variables: { term }
+	});
 }
+
+const INITIAL_DATA = {
+	data: {
+		searchPodcasts: {
+			term: "",
+			startIndex: 0,
+			nextOffset: null,
+			results: []
+		}
+	}
+};
+
+/**
+ * Accepts a GraphQL response for the `searchPodcasts` query and returns
+ * its data, error, or both.
+ * @param {GraphqlResponse} response
+ */
+function unwrap({ data, errors }) {
+	return {
+		data: data && data.searchPodcasts,
+		error: errors && errors[0]
+	};
+}
+
+/**
+ * Intercepts actions dispatched by `react-async`'s `useFetch()` hook to
+ * handle two special cases:
+ * - The fetch fulfilled, but GraphQL returned an error in the body of the
+ *   response. In this case, we change the action to "reject" and return the
+ *   GraphQL error as the payload.
+ * - The fetch fulfilled and the search term in the new data is the same as
+ *   the current search term. This happens when the user requests more results
+ *   for the same term, in which case we don't want to blow away the existing
+ *   results. Therefore, we check whether the old term and new term match, and
+ *   if they do, we append the new results to the old.
+ *
+ *   TODO: Dedupe results when appending...duplicate results are bad UX.
+ * @type {import("react-async").AsyncOptions<SearchResults>["reducer"]}
+ */
+const reducer = (state, action, internalReducer) => {
+	const newAction = { ...action };
+	switch (action.type) {
+		case "fulfill": {
+			const { data, error } = unwrap(action.payload);
+			if (error) {
+				newAction.type = "reject";
+				newAction.payload = new InternalServerError(error.message);
+			} else {
+				newAction.payload = Object.assign(
+					data,
+					data.term === state.data.term && {
+						results: [...state.data.results, ...data.results]
+					}
+				);
+			}
+			break;
+		}
+		default:
+			break;
+	}
+
+	return internalReducer(state, newAction);
+};
 
 function Search() {
 	const [term, setTerm] = useState("");
-	const { data, error, run, cancel, setData } = useAsync({
-		deferFn: fetchResults,
-		initialValue: { term: "", results: [] },
-		reducer: (prevState, action, internalReducer) => {
-			const nextState = internalReducer(prevState, action);
-			console.log({
-				action,
-				prevState,
-				nextState
-			});
-			if (
-				action.type === "fulfill" &&
-				prevState.data.term === nextState.data.term
-			) {
-				nextState.data.results.unshift(...prevState.data.results);
-			}
-			// console.log({ prevState, finalState: nextState });
-			return nextState;
+	const search = useFetch(
+		graphqlEndpoint,
+		{
+			method: "POST",
+			headers: {
+				Accept: "application/json",
+				"Content-Type": "application/json"
+			},
+			body: createQuery(term)
+		},
+		{
+			initialValue: unwrap(INITIAL_DATA).data,
+			reducer
 		}
-	});
-	const search = useStoreActions(actions => actions.podcasts.search);
+	);
 
 	useEffect(() => {
-		// console.log("running effect", { term });
 		if (!term) {
-			// console.log("setting term to empty string!")
-			setData({ term: "", results: [] });
+			search.setData(INITIAL_DATA);
 		} else {
-			// console.log("running the async effect!");
-			run(search, term);
-			return cancel;
+			search.run({ body: createQuery(term) });
 		}
-	}, [term, search, run, cancel, setData]);
+		return search.cancel;
+	}, [term, search.setData, search.run, search.cancel]);
 
 	const onChange = e => setTerm(e.target.value);
 
-	// The default message
-	let alertMessage =
-		"There are no results to display yet. Search using the form above to see results.";
-	if (data.results.length) {
-		alertMessage = `${data.results.length} results found.`;
-	}
-
-	// console.log("about to render", { data, error, term, alertMessage });
 	return (
 		<div className="page">
 			<h1 className="sr-only">Search</h1>
@@ -79,23 +122,80 @@ function Search() {
 				role="alert"
 				aria-live="polite"
 			>
-				{alertMessage}
+				<IfPending state={search}>Loading results.</IfPending>
+				<IfRejected state={search}>
+					There was an error retrieving the search results.
+				</IfRejected>
+				<IfFulfilled state={search}>
+					{({ results, term }) => {
+						if (term) {
+							return `Found ${results.length} ${
+								results.length === 1 ? "result" : "results"
+							} for '${term}.'`;
+						} else {
+							return "Type a search term into the form above to get results.";
+						}
+					}}
+				</IfFulfilled>
 			</div>
-			{data.results.length ? (
-				<ul className="-m-3" aria-label="Search results">
-					{data.results.map(podcast => (
-						<li key={podcast.id} className="p-3 bg-white">
-							{podcast.title}
-						</li>
-					))}
-				</ul>
-			) : (
+			<IfPending state={search}>
 				<div className="page__blurb my-auto text-center" aria-hidden="true">
-					Type a search term above to see results here.
+					Loading&hellip;
 				</div>
-			)}
+			</IfPending>
+			<IfRejected state={search}>
+				<div className="page__blurb my-auto text-center" aria-hidden="true">
+					There was an error retrieving the search results. 😔
+				</div>
+			</IfRejected>
+			<IfFulfilled state={search}>
+				{({ results, term }) => {
+					if (term) {
+						return (
+							<>
+								<div className="text-sm text-gray-700 mb-3" aria-hidden="true">
+									Found {results.length}{" "}
+									{results.length === 1 ? "result" : "results"} for &ldquo;
+									{term}.&rdquo;
+								</div>
+								<ul className="-mx-3" aria-label="Search results">
+									{results.map(podcast => (
+										<li key={podcast.id} className="p-3 bg-white">
+											{podcast.title}
+										</li>
+									))}
+								</ul>
+							</>
+						);
+					} else {
+						return (
+							<div
+								className="page__blurb my-auto text-center"
+								aria-hidden="true"
+							>
+								Type a search term above to see results here.
+							</div>
+						);
+					}
+				}}
+			</IfFulfilled>
 		</div>
 	);
 }
 
 export default Search;
+
+// Type definitions
+
+/**
+ * Represents the results of a search query.
+ * @typedef {import("../podcasts/PodcastRepo").PodcastSearchResults} SearchResults
+ */
+
+/**
+ * Represents a GraphQL response to the searchPodcasts query.
+ * @typedef {Object} GraphqlResponse
+ * @property {Object} data
+ * @property {SearchResults} data.searchPodcasts
+ * @property {Object[]} [errors]
+ */

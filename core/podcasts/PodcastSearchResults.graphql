@@ -1,4 +1,5 @@
 type PodcastSearchResults {
+	term: String!
 	startIndex: Int!
 	nextOffset: Int
 	results: [Podcast]!
