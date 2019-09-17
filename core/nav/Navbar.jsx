@@ -18,13 +18,13 @@ function NavBar() {
 			</Link>
 			<nav className="text-center ml-auto w-full order-4 sm:order-3 sm:w-auto">
 				<ul className="flex">
-					<li className="flex-grow">
+					<li className="flex-grow w-1/3 sm:w-auto">
 						<NavLink href="/">{user ? "Your Feed" : "Home"}</NavLink>
 					</li>
-					<li className="flex-grow">
+					<li className="flex-grow w-1/3 sm:w-auto">
 						<NavLink href="/search">Search</NavLink>
 					</li>
-					<li className="flex-grow">
+					<li className="flex-grow w-1/3 sm:w-auto">
 						<NavLink href="/playlist">Playlist</NavLink>
 					</li>
 				</ul>
