@@ -1,0 +1,21 @@
+@responsive {
+	.max-lines-1,
+	.max-lines-2,
+	.max-lines-3 {
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	.max-lines-1 {
+		-webkit-line-clamp: 1;
+	}
+
+	.max-lines-2 {
+		-webkit-line-clamp: 2;
+	}
+
+	.max-lines-3 {
+		-webkit-line-clamp: 3;
+	}
+}

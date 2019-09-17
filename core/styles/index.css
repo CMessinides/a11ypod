@@ -5,5 +5,9 @@
 
 @import "tailwindcss/components";
 @import "../components/button.css";
+@import "../components/page.css";
+@import "../components/card.css";
+@import "../components/card-stack.css";
 
 @import "tailwindcss/utilities";
+@import "./max-lines.css";

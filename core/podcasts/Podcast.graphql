@@ -1,0 +1,9 @@
+type Podcast {
+	id: ID!
+	title: String!
+	genre: String
+	publisher: Publisher!
+	iTunesUrl: String!
+	feedUrl: String
+	thumbnail: Thumbnail!
+}

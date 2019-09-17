@@ -64,13 +64,10 @@ function UserMenu({ user }) {
 				style={{ minWidth: "12rem", top: "-0.75rem", right: "-0.75rem" }}
 			>
 				<p className="italic leading-normal p-3 pr-12 text-gray-700 text-xs border-b border-gray-200">
-					Logged in as {user.name.givenName || user.displayName}
+					Logged in as {user.name}
 				</p>
 				<a className="block p-3" href="/logout">
-					Logout{" "}
-					<span className="sr-only">
-						a {user.name.givenName || user.displayName}
-					</span>
+					Logout <span className="sr-only">{user.name}</span>
 				</a>
 			</div>
 		</nav>
@@ -78,7 +75,11 @@ function UserMenu({ user }) {
 }
 
 UserMenu.propTypes = {
-	user: PropTypes.object.isRequired
+	user: PropTypes.shape({
+		id: PropTypes.string.isRequired,
+		name: PropTypes.string.isRequired,
+		picture: PropTypes.string.isRequired
+	}).isRequired
 };
 
 export default UserMenu;

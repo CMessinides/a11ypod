@@ -1,0 +1,3 @@
+type Query {
+	searchPodcasts(q: String!, params: PodcastSearchParams): PodcastSearchResults!
+}

@@ -1,0 +1,4 @@
+type Publisher {
+	id: ID
+	name: String!
+}
