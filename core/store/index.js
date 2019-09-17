@@ -10,7 +10,7 @@ import { createStore } from "easy-peasy";
 import StoreModel from "./StoreModel";
 
 const isServer = typeof window === "undefined";
-const __CASTAWAY_CLIENT_STORE__ = "__CASTAWAY_CLIENT_STORE__";
+const __A11YPOD_CLIENT_STORE__ = "__A11YPOD_CLIENT_STORE__";
 
 /**
  * @returns {import("easy-peasy").Store<StoreModel>}
@@ -22,11 +22,11 @@ export function getOrCreateStore(initialState) {
 	}
 
 	// Create and save store if none yet exists
-	if (!window[__CASTAWAY_CLIENT_STORE__]) {
-		window[__CASTAWAY_CLIENT_STORE__] = createStore(StoreModel, {
+	if (!window[__A11YPOD_CLIENT_STORE__]) {
+		window[__A11YPOD_CLIENT_STORE__] = createStore(StoreModel, {
 			initialState
 		});
 	}
 
-	return window[__CASTAWAY_CLIENT_STORE__];
+	return window[__A11YPOD_CLIENT_STORE__];
 }

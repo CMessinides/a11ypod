@@ -14,20 +14,18 @@ function NavBar() {
 				Skip navigation
 			</a>
 			<Link href="/">
-				<a className="p-3 order-1 font-bold text-lg sm:py-0 sm:px-6">
-					Castaway
-				</a>
+				<a className="p-3 order-1 font-bold text-lg sm:py-0 sm:px-6">a11yPod</a>
 			</Link>
 			<nav className="text-center ml-auto w-full order-4 sm:order-3 sm:w-auto">
 				<ul className="flex">
 					<li className="flex-grow">
-						<NavLink href="/">Home</NavLink>
+						<NavLink href="/">{user ? "Your Feed" : "Home"}</NavLink>
 					</li>
 					<li className="flex-grow">
 						<NavLink href="/search">Search</NavLink>
 					</li>
 					<li className="flex-grow">
-						<NavLink href="/playlist">Your List</NavLink>
+						<NavLink href="/playlist">Playlist</NavLink>
 					</li>
 				</ul>
 			</nav>

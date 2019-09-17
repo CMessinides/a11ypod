@@ -8,13 +8,13 @@ export default function Welcome() {
 	return (
 		<>
 			<Head>
-				<title>Castaway &mdash; Your podcasts, organized.</title>
+				<title>a11yPod &mdash; The accessible podcast app</title>
 			</Head>
 			<EmptyState>
-				<EmptyState.Heading>Your podcasts, organized.</EmptyState.Heading>
+				<EmptyState.Heading>a11yPod</EmptyState.Heading>
 				<EmptyState.Blurb>
-					Castaway helps you manage your favorite podcasts. Subscribe to
-					channels and save episodes to listen later.
+					a11yPod is a demo podcast app that prioritizes accessibility. Log in
+					to your account or search podcasts right away.
 				</EmptyState.Blurb>
 				<EmptyState.Actions>
 					<LoginButton className="button--lg">Get started</LoginButton>
