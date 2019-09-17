@@ -101,7 +101,6 @@ function Search() {
 			reducer
 		}
 	);
-	console.log("search state", search);
 
 	useEffect(() => {
 		if (!term) {

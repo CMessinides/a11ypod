@@ -18,7 +18,6 @@ function setupGraphql(server, { endpoint = "/api/v1/graphql" } = {}) {
 			const abortController = new AbortController();
 			const { signal } = abortController;
 			req.on("close", () => {
-				console.log("aborted in context!");
 				abortController.abort();
 			});
 			return { signal };

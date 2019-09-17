@@ -12,7 +12,6 @@ function createRequest(url, { signal: externalSignal }) {
 
 	if (externalSignal) {
 		externalSignal.addEventListener("abort", () => {
-			console.log("aborted by external signal!");
 			abortController.abort();
 		});
 	}
@@ -21,7 +20,6 @@ function createRequest(url, { signal: externalSignal }) {
 	return async function() {
 		setTimeout(() => {
 			shouldErrorOnAbort = true;
-			console.log("aborted by timeout!");
 			abortController.abort();
 		}, 3000);
 
@@ -29,7 +27,6 @@ function createRequest(url, { signal: externalSignal }) {
 			return await (await fetch(url, { signal })).json();
 		} catch (e) {
 			if (e.name === "AbortError") {
-				console.log("aborted", e);
 				if (!shouldErrorOnAbort) return;
 			}
 			throw new InternalServerError(e);
@@ -57,7 +54,6 @@ module.exports = {
 		// First, check the cache for equivalent results and return early if they exist
 		const cacheKey = [term, offset, limit].join("");
 		if (cache.has(cacheKey)) {
-			console.log("hit cache!");
 			return cache.get(cacheKey);
 		}
 

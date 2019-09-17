@@ -32,9 +32,7 @@ class App extends NextApp {
 
 	constructor(props) {
 		super(props);
-		console.log({ props });
 		this.store = getOrCreateStore(props.initialState);
-		console.log({ state: this.store.getState() });
 	}
 
 	render() {
