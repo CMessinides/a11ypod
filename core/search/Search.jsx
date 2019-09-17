@@ -131,7 +131,7 @@ function Search() {
 						if (term) {
 							return `Found ${results.length} ${
 								results.length === 1 ? "result" : "results"
-							} for '${term}.'`;
+							} for '${term}'.`;
 						} else {
 							return "Type a search term into the form above to get results.";
 						}
@@ -156,7 +156,7 @@ function Search() {
 								<div className="text-sm text-gray-700 mb-3" aria-hidden="true">
 									Found {results.length}{" "}
 									{results.length === 1 ? "result" : "results"} for &ldquo;
-									{term}.&rdquo;
+									{term}&rdquo;
 								</div>
 								<ul className="-mx-3" aria-label="Search results">
 									{results.map(podcast => (

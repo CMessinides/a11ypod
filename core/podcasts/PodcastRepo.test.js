@@ -1,16 +1,20 @@
 import PodcastRepo from "./PodcastRepo";
-import { InternalServerError } from "../errors";
 
 jest.mock("isomorphic-unfetch");
 import fetch from "isomorphic-unfetch";
 import { createFetchMocks } from "../test-helpers";
-const { mockFetchResolve, mockFetchReject } = createFetchMocks(fetch);
+const { mockFetchResolve } = createFetchMocks(fetch);
 
 import searchNbaResults from "./__fixtures__/search-nba.json";
 import searchNbaResultsWithOffset from "./__fixtures__/search-nba-w-offset.json";
 import searchNbaResultsLimit11 from "./__fixtures__/search-nba-limit-11.json";
 
 jest.useFakeTimers();
+
+afterEach(() => {
+	fetch.mockReset();
+	PodcastRepo.clearCache();
+});
 
 describe("search", () => {
 	it("should return podcasts matching the search term", async () => {
@@ -20,7 +24,7 @@ describe("search", () => {
 		const search = await PodcastRepo.search("nba");
 
 		expect(search).toMatchSnapshot();
-		expect(fetch).toHaveBeenLastCalledWith(
+		expect(fetch).toHaveBeenCalledWith(
 			expect.stringContaining(
 				"https://itunes.apple.com/search?term=nba&entity=podcast"
 			),
@@ -35,7 +39,7 @@ describe("search", () => {
 		const search = await PodcastRepo.search("nba", { offset: 25 });
 
 		expect(search.startIndex).toBe(25);
-		expect(fetch).toHaveBeenLastCalledWith(
+		expect(fetch).toHaveBeenCalledWith(
 			expect.stringContaining("offset=25"),
 			expect.anything()
 		);
@@ -70,19 +74,38 @@ describe("search", () => {
 		expect(search.results.length).toBe(11);
 	});
 
-	it("should throw if the network request fails", () => {
-		mockFetchReject();
-		expect(PodcastRepo.search("nba")).rejects.toBeInstanceOf(
-			InternalServerError
-		);
+	it("should cache search results", async () => {
+		// iTunes will stop serving results if we ping their API too often, and the
+		// autosearch feature on the client can cause those requests to skyrocket.
+		// Therefore, to mitigate annoying and unpredictable errors on the front-
+		// end, we need to cache results for equivalent queries (same term, limit,
+		// and offset).
+		expect.assertions(4);
 
-		mockFetchResolve({
-			status: 404,
-			statusText: "Not Found"
-		});
-		expect(PodcastRepo.search("nba")).rejects.toBeInstanceOf(
-			InternalServerError
-		);
+		mockFetchResolve({ json: searchNbaResults, once: false });
+
+		// The first call should result in a cache miss and a network request
+		await PodcastRepo.search("nba");
+		expect(fetch).toHaveBeenCalled();
+
+		// Reset the fetch call history
+		fetch.mockClear();
+
+		// The same search query should now result in a cache hit and no network
+		// request.
+		await PodcastRepo.search("nba");
+		expect(fetch).not.toHaveBeenCalled();
+
+		// Limit and offset parameters should be part of the query comparison,
+		// meaning this call should result in a cache miss...
+		await PodcastRepo.search("nba", { limit: 25, offset: 50 });
+		expect(fetch).toHaveBeenCalled();
+
+		fetch.mockClear();
+
+		// ...and this call should hit the cache.
+		await PodcastRepo.search("nba", { limit: 25, offset: 50 });
+		expect(fetch).not.toHaveBeenCalled();
 	});
 });
 

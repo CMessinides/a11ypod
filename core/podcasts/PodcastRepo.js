@@ -1,6 +1,7 @@
 const { URLSearchParams } = require("url");
 const fetch = require("isomorphic-unfetch");
 const AbortController = require("abort-controller");
+const LRU = require("lru-cache");
 const { InternalServerError } = require("../errors/");
 
 const BASE_URL = "https://itunes.apple.com";
@@ -36,6 +37,12 @@ function createRequest(url, { signal: externalSignal }) {
 	};
 }
 
+const cache = new LRU({
+	max: 1000,
+	length: ({ results }) => results.length,
+	maxAge: 1000 * 60 * 60
+});
+
 module.exports = {
 	/**
 	 * Search the iTunes podcast directory for a given search term.
@@ -47,6 +54,13 @@ module.exports = {
 	 * @returns {Promise<PodcastSearchResults>}
 	 */
 	async search(term, { signal, offset = 0, limit = 25 } = {}) {
+		// First, check the cache for equivalent results and return early if they exist
+		const cacheKey = [term, offset, limit].join("");
+		if (cache.has(cacheKey)) {
+			console.log("hit cache!");
+			return cache.get(cacheKey);
+		}
+
 		const params = new URLSearchParams(
 			Object.assign(
 				{
@@ -72,7 +86,7 @@ module.exports = {
 		// since we needed it only to peek at the next page.
 		const results = !isEndOfResults ? data.results.slice(0, -1) : data.results;
 		/** @type {PodcastSearchResults} */
-		return {
+		const response = {
 			term,
 			startIndex: offset,
 			nextOffset: isEndOfResults ? null : limit + offset,
@@ -96,6 +110,15 @@ module.exports = {
 				};
 			})
 		};
+
+		cache.set(cacheKey, response);
+		return response;
+	},
+	/**
+	 * Clear the repo's internal cache of search results from the iTunes API.
+	 */
+	clearCache() {
+		cache.reset();
 	}
 };
 
