@@ -1,7 +1,7 @@
 type Podcast {
 	id: ID!
 	title: String!
-	genre: String!
+	genre: String
 	publisher: Publisher!
 	iTunesUrl: String!
 	feedUrl: String
