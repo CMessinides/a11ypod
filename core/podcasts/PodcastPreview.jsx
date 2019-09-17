@@ -6,7 +6,7 @@ function PodcastPreview({ title, publisher, thumbnail }) {
 		<article>
 			<div className="flex items-start">
 				<img
-					className="w-16 h-16 bg-gray-200 mr-3"
+					className="w-16 h-16 bg-gray-200 flex-shrink-0 mr-3"
 					src={thumbnail._100w}
 					srcSet={Object.keys(thumbnail)
 						.map(width => `${thumbnail[width]} ${width.slice(1)}`)
