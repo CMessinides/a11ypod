@@ -12,7 +12,7 @@ function Playlist() {
 		return (
 			<>
 				<Head>
-					<title>Your Playlist &mdash; Castaway</title>
+					<title>Your Playlist &mdash; a11yPod</title>
 				</Head>
 				<EmptyState>
 					<EmptyState.Heading>Your Playlist: Coming Soon 🚧</EmptyState.Heading>
@@ -29,16 +29,21 @@ function Playlist() {
 		);
 	} else {
 		return (
-			<EmptyState>
-				<EmptyState.Heading>Your List</EmptyState.Heading>
-				<EmptyState.Blurb>
-					Saved episodes will appear here. Log in or create an account to get
-					started.
-				</EmptyState.Blurb>
-				<EmptyState.Actions>
-					<LoginButton className="button--lg">Get Started</LoginButton>
-				</EmptyState.Actions>
-			</EmptyState>
+			<>
+				<Head>
+					<title>Your Playlist &mdash; a11yPod</title>
+				</Head>
+				<EmptyState>
+					<EmptyState.Heading>Your Playlist</EmptyState.Heading>
+					<EmptyState.Blurb>
+						Saved episodes will appear here. Log in or create an account to get
+						started.
+					</EmptyState.Blurb>
+					<EmptyState.Actions>
+						<LoginButton className="button--lg">Get Started</LoginButton>
+					</EmptyState.Actions>
+				</EmptyState>
+			</>
 		);
 	}
 }

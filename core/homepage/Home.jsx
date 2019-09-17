@@ -12,7 +12,7 @@ function Home() {
 		return (
 			<>
 				<Head>
-					<title>Your Feed &mdash; Castaway</title>
+					<title>Your Feed &mdash; a11yPod</title>
 				</Head>
 				<EmptyState>
 					<EmptyState.Heading>Your Feed: Coming Soon 🚧</EmptyState.Heading>

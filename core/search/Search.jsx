@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Head from "next/head";
 import { useFetch, IfPending, IfFulfilled, IfRejected } from "react-async";
 import uniqBy from "lodash/fp/uniqBy";
 import SearchInput from "./SearchInput";
@@ -114,85 +115,93 @@ function Search() {
 	const onChange = e => setTerm(e.target.value);
 
 	return (
-		<div className="page">
-			<h1 className="sr-only">Search</h1>
-			<form role="search" aria-label="Podcasts" className="pb-3 sm:pb-6">
-				<SearchInput
-					id="podcast-search"
-					placeholder="Search podcasts"
-					value={term}
-					onChange={onChange}
-				/>
-			</form>
-			<div
-				id="result-count-alert"
-				className="sr-only"
-				role="alert"
-				aria-live="polite"
-			>
-				<IfPending state={search}>Loading results.</IfPending>
+		<>
+			<Head>
+				<title>Search Podcasts &mdash; a11yPod</title>
+			</Head>
+			<div className="page">
+				<h1 className="sr-only">Search</h1>
+				<form role="search" aria-label="Podcasts" className="pb-3 sm:pb-6">
+					<SearchInput
+						id="podcast-search"
+						placeholder="Search podcasts"
+						value={term}
+						onChange={onChange}
+					/>
+				</form>
+				<div
+					id="result-count-alert"
+					className="sr-only"
+					role="alert"
+					aria-live="polite"
+				>
+					<IfPending state={search}>Loading results.</IfPending>
+					<IfRejected state={search}>
+						There was an error retrieving the search results.
+					</IfRejected>
+					<IfFulfilled state={search}>
+						{({ results, term }) => {
+							if (term) {
+								return `Found ${results.length} ${
+									results.length === 1 ? "result" : "results"
+								} for '${term}'.`;
+							} else {
+								return "Type a search term into the form above to get results.";
+							}
+						}}
+					</IfFulfilled>
+				</div>
+				<IfPending state={search}>
+					<div className="page__blurb my-auto text-center" aria-hidden="true">
+						Loading&hellip;
+					</div>
+				</IfPending>
 				<IfRejected state={search}>
-					There was an error retrieving the search results.
+					<div className="page__blurb my-auto text-center" aria-hidden="true">
+						There was an error retrieving the search results. 😔
+					</div>
 				</IfRejected>
 				<IfFulfilled state={search}>
 					{({ results, term }) => {
 						if (term) {
-							return `Found ${results.length} ${
-								results.length === 1 ? "result" : "results"
-							} for '${term}'.`;
+							return (
+								<>
+									<div
+										className="text-sm text-gray-700 mb-3"
+										aria-hidden="true"
+									>
+										Found {results.length}{" "}
+										{results.length === 1 ? "result" : "results"} for &ldquo;
+										{term}&rdquo;
+									</div>
+									<aside className="bg-yellow-300 text-sm p-3 sm:px-6 -mx-3 sm:-mx-6">
+										<strong>🚧 Links to podcasts are coming soon.</strong> For
+										now, search results do not link anywhere else.
+									</aside>
+									<CardStack
+										className="-mx-3 sm:-mx-6"
+										aria-label="Search results"
+									>
+										{results.map(podcast => (
+											<PodcastPreview key={podcast.id} {...podcast} />
+										))}
+									</CardStack>
+								</>
+							);
 						} else {
-							return "Type a search term into the form above to get results.";
+							return (
+								<div
+									className="page__blurb my-auto text-center"
+									aria-hidden="true"
+								>
+									Type a search term above to see results here.
+								</div>
+							);
 						}
 					}}
 				</IfFulfilled>
 			</div>
-			<IfPending state={search}>
-				<div className="page__blurb my-auto text-center" aria-hidden="true">
-					Loading&hellip;
-				</div>
-			</IfPending>
-			<IfRejected state={search}>
-				<div className="page__blurb my-auto text-center" aria-hidden="true">
-					There was an error retrieving the search results. 😔
-				</div>
-			</IfRejected>
-			<IfFulfilled state={search}>
-				{({ results, term }) => {
-					if (term) {
-						return (
-							<>
-								<div className="text-sm text-gray-700 mb-3" aria-hidden="true">
-									Found {results.length}{" "}
-									{results.length === 1 ? "result" : "results"} for &ldquo;
-									{term}&rdquo;
-								</div>
-								<aside className="bg-yellow-300 text-sm p-3 sm:px-6 -mx-3 sm:-mx-6">
-									<strong>🚧 Links to podcasts are coming soon.</strong> For
-									now, search results do not link anywhere else.
-								</aside>
-								<CardStack
-									className="-mx-3 sm:-mx-6"
-									aria-label="Search results"
-								>
-									{results.map(podcast => (
-										<PodcastPreview key={podcast.id} {...podcast} />
-									))}
-								</CardStack>
-							</>
-						);
-					} else {
-						return (
-							<div
-								className="page__blurb my-auto text-center"
-								aria-hidden="true"
-							>
-								Type a search term above to see results here.
-							</div>
-						);
-					}
-				}}
-			</IfFulfilled>
-		</div>
+		</>
 	);
 }
 
