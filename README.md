@@ -11,7 +11,7 @@ This is a simple app that allows users to browse the iTunes podcast directory. F
 ## What this project is not
 
 - **An end-user product**: The primary goal of this project is not to fulfill the needs of real users. Although it should certainly be a functional application, it does not aim to address a market niche, grow a user base, or anything of that sort. The primary goal is to demonstrate the priorities listed in the previous section.
-- **A well-researched design**: I am using the default Tailwind CSS settings in this project to create an attractive and usable design quickly.No UX research or user testing is informing the design decisions made here.
+- **A well-researched design**: I am using the default Tailwind CSS settings in this project to create an attractive and usable design quickly. No UX research or user testing is informing the design decisions made here.
 - **An example of robust browser testing or compatibility**: I would love to make this app compatible with a wide range of browsers, but I don't have the time or resources to do that with this project.
 
 ## License
