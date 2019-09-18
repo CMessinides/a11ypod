@@ -2,10 +2,10 @@
 
 ## Purpose of this project
 
-This is a simple app that allows users to browse the iTunes podcast directory, subscribe to podcast channels, and save episodes to a "Listen Later" list. I've created it with a couple priorities in mind:
+This is a simple app that allows users to browse the iTunes podcast directory. Future versions will allow users to subscribe to podcast channels and save episodes to a "Listen Later" list. I've created it with a couple priorities in mind:
 
 - **Accessibility**: This app should follow all web accessibility best practices, including sufficient color contrast, semantic HTML, keyboard navigation, and appropriate ARIA roles and attributes.
-- **Full-stack JavaScript**: This app demonstrates one way of writing a full-stack JavaScript application. It includes both GraphQL and REST API endpoints written in Node.js, server side-rendered React with Next.js, and authentication via an integration with Auth0.
+- **Full-stack JavaScript**: This app demonstrates one way of writing a full-stack JavaScript application. It includes a GraphQL API endpoint built on top of Node.js and Express, server side-rendered React with Next.js, and authentication via an integration with Auth0.
 - **GitHub workflow**: Besides a few commits to get the repo bootstrapped, I will use issues and pull requests to record bugs, features, and other significant changes to the code.
 
 ## What this project is not
