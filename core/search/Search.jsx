@@ -1,45 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Head from "next/head";
-import { useFetch, IfPending, IfFulfilled, IfRejected } from "react-async";
+import { useStoreActions } from "easy-peasy";
+import { useAsync, IfPending, IfFulfilled, IfRejected } from "react-async";
 import uniqBy from "lodash/fp/uniqBy";
 import SearchInput from "./SearchInput";
 import CardStack from "../components/CardStack";
 import PodcastPreview from "../podcasts/PodcastPreview";
-import { graphqlEndpoint } from "../env";
-import { InternalServerError } from "../errors";
-
-import query from "../podcasts/SearchQuery.graphql";
-
-function createQuery(term) {
-	return JSON.stringify({
-		query,
-		variables: { term }
-	});
-}
 
 const INITIAL_DATA = {
-	data: {
-		searchPodcasts: {
-			term: "",
-			startIndex: 0,
-			nextOffset: null,
-			results: []
-		}
-	}
+	term: "",
+	startIndex: 0,
+	nextOffset: null,
+	results: []
 };
-
-/**
- * Accepts a GraphQL response for the `searchPodcasts` query and returns
- * its data, error, or both.
- * @param {GraphqlResponse} response
- */
-function unwrap({ data, errors }) {
-	return {
-		data: data && data.searchPodcasts,
-		error:
-			errors && new Error(`${errors[0].extensions.code}: ${errors[0].message}`)
-	};
-}
 
 /**
  * Keep only unique podcasts
@@ -47,67 +20,46 @@ function unwrap({ data, errors }) {
 const dedupe = uniqBy("id");
 
 /**
- * Intercepts actions dispatched by `react-async`'s `useFetch()` hook to
- * handle two special cases:
- * - The fetch fulfilled, but GraphQL returned an error in the body of the
- *   response. In this case, we change the action to "reject" and return the
- *   GraphQL error as the payload.
- * - The fetch fulfilled and the search term in the new data is the same as
- *   the current search term. This happens when the user requests more results
- *   for the same term, in which case we don't want to blow away the existing
- *   results. Therefore, we check whether the old term and new term match, and
- *   if they do, we append the new results to the old. Repeated results are
- *   removed.
+ * Intercepts actions dispatched by `react-async`'s `useAsync()` hook to
+ * handle the following special case: The fetch fulfilled and the search
+ * term in the new data is the same as the current search term. This happens
+ * when the user requests more results for the same term, in which case we
+ * don't want to blow away the existing results. Therefore, we check whether
+ * the old term and new term match, and if they do, we append the new results
+ * to the old. Repeated results are removed.
  * @type {import("react-async").AsyncOptions<SearchResults>["reducer"]}
  */
 const reducer = (state, action, internalReducer) => {
-	const newAction = { ...action };
-	switch (action.type) {
-		case "fulfill": {
-			const { data, error } = unwrap(action.payload);
-			if (error) {
-				newAction.type = "reject";
-				newAction.payload = new InternalServerError(error.message);
-			} else {
-				newAction.payload = Object.assign(
-					data,
-					data.term === state.data.term && {
-						results: dedupe([...state.data.results, ...data.results])
-					}
-				);
-			}
-			break;
-		}
-		default:
-			break;
+	if (action.type === "fulfill" && action.payload.term === state.data.term) {
+		action.payload.results = dedupe([
+			...state.data.results,
+			...action.payload.results
+		]);
 	}
 
-	return internalReducer(state, newAction);
+	return internalReducer(state, action);
 };
 
 function Search() {
 	const [term, setTerm] = useState("");
-	const search = useFetch(
-		graphqlEndpoint,
-		{
-			method: "POST",
-			headers: {
-				Accept: "application/json",
-				"Content-Type": "application/json"
-			},
-			body: createQuery(term)
+	const searchPodcasts = useStoreActions(actions => actions.podcasts.search);
+	const deferFn = useCallback(
+		(args, props, { signal }) => {
+			return searchPodcasts({ ...args[0], signal });
 		},
-		{
-			initialValue: unwrap(INITIAL_DATA).data,
-			reducer
-		}
+		[searchPodcasts]
 	);
+	const search = useAsync({
+		initialValue: INITIAL_DATA,
+		deferFn,
+		reducer
+	});
 
 	useEffect(() => {
 		if (!term) {
 			search.setData(INITIAL_DATA);
 		} else {
-			search.run({ body: createQuery(term) });
+			search.run({ term });
 		}
 		return search.cancel;
 	}, [term, search.setData, search.run, search.cancel]);
