@@ -22,10 +22,10 @@ class App extends NextApp {
 			);
 		}
 
-		const pageProps = await super.getInitialProps({ ctx, Component });
+		const props = await super.getInitialProps({ ctx, Component });
 
 		return {
-			...pageProps,
+			...props,
 			initialState: ctx.store.getState()
 		};
 	}

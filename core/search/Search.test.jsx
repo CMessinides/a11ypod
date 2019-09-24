@@ -16,6 +16,7 @@ import { createFetchMocks } from "../test-helpers";
 import mockData from "../podcasts/__fixtures__/gql-search-podcasts.json";
 const { mockFetchResolve, mockFetchReject } = createFetchMocks(fetch);
 mockFetchResolve({ json: mockData, once: false });
+afterEach(fetch.mockClear);
 
 afterEach(cleanup);
 
@@ -69,7 +70,7 @@ it("should fetch and display search results when the user types a new term", asy
 	await waitForElement(() => getByLabelText(/search results/i));
 
 	// The results list should be visible
-	const resultsList = await getByLabelText(/search results/i);
+	const resultsList = getByLabelText(/search results/i);
 	expect(resultsList.children.length).toBe(5);
 
 	// The alert should notify the user of the results
@@ -79,7 +80,8 @@ it("should fetch and display search results when the user types a new term", asy
 it("should display an error if the search fails", async () => {
 	expect.assertions(1);
 
-	mockFetchReject({ reason: new Error() });
+	// Mock a failure on every fetch
+	mockFetchReject({ reason: new Error(), once: false });
 
 	const { Container } = createStore();
 	const { getByLabelText, getByRole } = render(
@@ -95,5 +97,53 @@ it("should display an error if the search fails", async () => {
 	// The alert should notify the user of the error
 	await wait(() => {
 		expect(alert).toHaveTextContent("error");
+	});
+
+	// Return the default mock fetch behavior
+	mockFetchResolve({ json: mockData, once: false });
+});
+
+describe("getInitialProps", () => {
+	it("should return search results for the term in the query string", () => {
+		const query = { q: "vox" };
+		const { store } = createStore();
+
+		return expect(
+			Search.getInitialProps({ query, store })
+		).resolves.toStrictEqual({
+			initialTerm: "vox",
+			initialValue: mockData.data.searchPodcasts
+		});
+	});
+
+	it("should return an error if the search fails", () => {
+		mockFetchReject({ reason: new Error() });
+
+		const query = { q: "vox" };
+		const { store } = createStore();
+
+		return expect(
+			Search.getInitialProps({ query, store })
+		).resolves.toStrictEqual({
+			initialTerm: "vox",
+			initialValue: expect.any(Error)
+		});
+	});
+
+	it("should return sensible defaults if the query is empty", () => {
+		const query = {};
+		const { store } = createStore();
+
+		return expect(
+			Search.getInitialProps({ query, store })
+		).resolves.toStrictEqual({
+			initialTerm: "",
+			initialValue: {
+				term: "",
+				startIndex: 0,
+				nextOffset: null,
+				results: []
+			}
+		});
 	});
 });

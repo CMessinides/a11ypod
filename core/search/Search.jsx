@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
+import PropTypes from "prop-types";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import { useStoreActions } from "easy-peasy";
 import { useAsync, IfPending, IfFulfilled, IfRejected } from "react-async";
 import uniqBy from "lodash/fp/uniqBy";
@@ -40,8 +42,9 @@ const reducer = (state, action, internalReducer) => {
 	return internalReducer(state, action);
 };
 
-function Search() {
-	const [term, setTerm] = useState("");
+function Search({ initialTerm = "", initialValue = INITIAL_DATA }) {
+	const router = useRouter();
+	const [term, setTerm] = useState(initialTerm);
 	const searchPodcasts = useStoreActions(actions => actions.podcasts.search);
 	const deferFn = useCallback(
 		(args, props, { signal }) => {
@@ -50,7 +53,7 @@ function Search() {
 		[searchPodcasts]
 	);
 	const search = useAsync({
-		initialValue: INITIAL_DATA,
+		initialValue,
 		deferFn,
 		reducer
 	});
@@ -58,11 +61,18 @@ function Search() {
 	useEffect(() => {
 		if (!term) {
 			search.setData(INITIAL_DATA);
-		} else {
+		} else if (search.value.term !== term) {
 			search.run({ term });
+			return search.cancel;
 		}
-		return search.cancel;
-	}, [term, search.setData, search.run, search.cancel]);
+	}, [term, search.value.term, search.setData, search.run, search.cancel]);
+
+	useEffect(() => {
+		if (router) {
+			const href = "/search?q=" + term;
+			router.replace(href, href, { shallow: true });
+		}
+	}, [term]);
 
 	const onChange = e => setTerm(e.target.value);
 
@@ -156,6 +166,37 @@ function Search() {
 		</>
 	);
 }
+
+Search.getInitialProps = async function({ query, store }) {
+	const props = {
+		initialTerm: query.q || "",
+		initialValue: INITIAL_DATA
+	};
+
+	if (props.initialTerm) {
+		const searchPodcasts = store.getActions().podcasts.search;
+		try {
+			props.initialValue = await searchPodcasts({ term: query.q });
+		} catch (e) {
+			props.initialValue = e;
+		}
+	}
+
+	return props;
+};
+
+Search.propTypes = {
+	initialTerm: PropTypes.string,
+	initialValue: PropTypes.oneOfType([
+		PropTypes.shape({
+			term: PropTypes.string.isRequired,
+			startIndex: PropTypes.number.isRequired,
+			nextOffset: PropTypes.number,
+			results: PropTypes.array.isRequired
+		}),
+		PropTypes.instanceOf(Error)
+	])
+};
 
 export default Search;
 
