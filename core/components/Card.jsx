@@ -8,9 +8,11 @@ const cardPropTypes = {
 	className: PropTypes.string
 };
 
-function Card({ as: Component = "div", className, children }) {
+function Card({ as: Component = "div", className, children, ...otherProps }) {
 	return (
-		<Component className={classNames("card", className)}>{children}</Component>
+		<Component {...otherProps} className={classNames("card", className)}>
+			{children}
+		</Component>
 	);
 }
 

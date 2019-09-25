@@ -3,11 +3,15 @@ import PropTypes from "prop-types";
 import classNames from "classnames";
 import { StackedCard } from "./Card";
 
-function CardStack({ className, children, ...otherProps }) {
+function CardStack({ className, children, listRef, ...otherProps }) {
 	return (
-		<ul className={classNames("card-stack", className)} {...otherProps}>
+		<ul
+			className={classNames("card-stack", className)}
+			ref={listRef}
+			{...otherProps}
+		>
 			{React.Children.map(children, child => (
-				<StackedCard as="li" className="card-stack__item">
+				<StackedCard as="li" className="card-stack__item" tabIndex="-1">
 					{child}
 				</StackedCard>
 			))}
@@ -17,7 +21,8 @@ function CardStack({ className, children, ...otherProps }) {
 
 CardStack.propTypes = {
 	children: PropTypes.node,
-	className: PropTypes.string
+	className: PropTypes.string,
+	listRef: PropTypes.object
 };
 
 export default CardStack;

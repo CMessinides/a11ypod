@@ -1,0 +1,186 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`search should query the GraphQL endpoint and return the results 1`] = `
+Object {
+  "nextOffset": 5,
+  "results": Array [
+    Object {
+      "feedUrl": "https://feeds.megaphone.fm/theweeds",
+      "genre": "Politics",
+      "iTunesUrl": "https://podcasts.apple.com/us/podcast/the-weeds/id1042433083?uo=4",
+      "id": "1042433083",
+      "publisher": Object {
+        "id": "1439215748",
+        "name": "Vox",
+      },
+      "thumbnail": Object {
+        "_100w": "https://is3-ssl.mzstatic.com/image/thumb/Podcasts113/v4/c6/89/4c/c6894cfa-5084-c9fe-3c72-666978686bb4/mza_1739210204902964516.png/100x100bb.jpg",
+        "_30w": "https://is3-ssl.mzstatic.com/image/thumb/Podcasts113/v4/c6/89/4c/c6894cfa-5084-c9fe-3c72-666978686bb4/mza_1739210204902964516.png/30x30bb.jpg",
+        "_600w": "https://is3-ssl.mzstatic.com/image/thumb/Podcasts113/v4/c6/89/4c/c6894cfa-5084-c9fe-3c72-666978686bb4/mza_1739210204902964516.png/600x600bb.jpg",
+        "_60w": "https://is3-ssl.mzstatic.com/image/thumb/Podcasts113/v4/c6/89/4c/c6894cfa-5084-c9fe-3c72-666978686bb4/mza_1739210204902964516.png/60x60bb.jpg",
+      },
+      "title": "The Weeds",
+    },
+    Object {
+      "feedUrl": "https://feeds.megaphone.fm/theezrakleinshow",
+      "genre": "Philosophy",
+      "iTunesUrl": "https://podcasts.apple.com/us/podcast/the-ezra-klein-show/id1081584611?uo=4",
+      "id": "1081584611",
+      "publisher": Object {
+        "id": "1439215748",
+        "name": "Vox",
+      },
+      "thumbnail": Object {
+        "_100w": "https://is4-ssl.mzstatic.com/image/thumb/Podcasts113/v4/7a/17/0f/7a170fc0-97ae-64be-eeb7-9ecf9330581d/mza_1082450096055116974.png/100x100bb.jpg",
+        "_30w": "https://is4-ssl.mzstatic.com/image/thumb/Podcasts113/v4/7a/17/0f/7a170fc0-97ae-64be-eeb7-9ecf9330581d/mza_1082450096055116974.png/30x30bb.jpg",
+        "_600w": "https://is4-ssl.mzstatic.com/image/thumb/Podcasts113/v4/7a/17/0f/7a170fc0-97ae-64be-eeb7-9ecf9330581d/mza_1082450096055116974.png/600x600bb.jpg",
+        "_60w": "https://is4-ssl.mzstatic.com/image/thumb/Podcasts113/v4/7a/17/0f/7a170fc0-97ae-64be-eeb7-9ecf9330581d/mza_1082450096055116974.png/60x60bb.jpg",
+      },
+      "title": "The Ezra Klein Show",
+    },
+    Object {
+      "feedUrl": "https://feeds.megaphone.fm/impact",
+      "genre": "Documentary",
+      "iTunesUrl": "https://podcasts.apple.com/us/podcast/the-impact/id1294325824?uo=4",
+      "id": "1294325824",
+      "publisher": Object {
+        "id": "1439215748",
+        "name": "Vox",
+      },
+      "thumbnail": Object {
+        "_100w": "https://is2-ssl.mzstatic.com/image/thumb/Podcasts113/v4/24/ef/39/24ef396a-1ae5-6e79-e661-20fdea200f93/mza_3156222670743834797.png/100x100bb.jpg",
+        "_30w": "https://is2-ssl.mzstatic.com/image/thumb/Podcasts113/v4/24/ef/39/24ef396a-1ae5-6e79-e661-20fdea200f93/mza_3156222670743834797.png/30x30bb.jpg",
+        "_600w": "https://is2-ssl.mzstatic.com/image/thumb/Podcasts113/v4/24/ef/39/24ef396a-1ae5-6e79-e661-20fdea200f93/mza_3156222670743834797.png/600x600bb.jpg",
+        "_60w": "https://is2-ssl.mzstatic.com/image/thumb/Podcasts113/v4/24/ef/39/24ef396a-1ae5-6e79-e661-20fdea200f93/mza_3156222670743834797.png/60x60bb.jpg",
+      },
+      "title": "The Impact",
+    },
+    Object {
+      "feedUrl": "https://feeds.megaphone.fm/switchedonpop",
+      "genre": "Music Commentary",
+      "iTunesUrl": "https://podcasts.apple.com/us/podcast/switched-on-pop/id934552872?uo=4",
+      "id": "934552872",
+      "publisher": Object {
+        "id": "1439215748",
+        "name": "Vox",
+      },
+      "thumbnail": Object {
+        "_100w": "https://is3-ssl.mzstatic.com/image/thumb/Podcasts123/v4/f3/d1/22/f3d12254-e15b-4b1b-6558-74470f0b93ae/mza_2025196989843407248.png/100x100bb.jpg",
+        "_30w": "https://is3-ssl.mzstatic.com/image/thumb/Podcasts123/v4/f3/d1/22/f3d12254-e15b-4b1b-6558-74470f0b93ae/mza_2025196989843407248.png/30x30bb.jpg",
+        "_600w": "https://is3-ssl.mzstatic.com/image/thumb/Podcasts123/v4/f3/d1/22/f3d12254-e15b-4b1b-6558-74470f0b93ae/mza_2025196989843407248.png/600x600bb.jpg",
+        "_60w": "https://is3-ssl.mzstatic.com/image/thumb/Podcasts123/v4/f3/d1/22/f3d12254-e15b-4b1b-6558-74470f0b93ae/mza_2025196989843407248.png/60x60bb.jpg",
+      },
+      "title": "Switched on Pop",
+    },
+    Object {
+      "feedUrl": "https://feeds.megaphone.fm/worldly",
+      "genre": "Politics",
+      "iTunesUrl": "https://podcasts.apple.com/us/podcast/worldly/id1248862589?uo=4",
+      "id": "1248862589",
+      "publisher": Object {
+        "id": "1439215748",
+        "name": "Vox",
+      },
+      "thumbnail": Object {
+        "_100w": "https://is5-ssl.mzstatic.com/image/thumb/Podcasts123/v4/08/2e/07/082e079a-cabf-db62-3fea-a74cc8a1b594/mza_1165648460994853372.png/100x100bb.jpg",
+        "_30w": "https://is5-ssl.mzstatic.com/image/thumb/Podcasts123/v4/08/2e/07/082e079a-cabf-db62-3fea-a74cc8a1b594/mza_1165648460994853372.png/30x30bb.jpg",
+        "_600w": "https://is5-ssl.mzstatic.com/image/thumb/Podcasts123/v4/08/2e/07/082e079a-cabf-db62-3fea-a74cc8a1b594/mza_1165648460994853372.png/600x600bb.jpg",
+        "_60w": "https://is5-ssl.mzstatic.com/image/thumb/Podcasts123/v4/08/2e/07/082e079a-cabf-db62-3fea-a74cc8a1b594/mza_1165648460994853372.png/60x60bb.jpg",
+      },
+      "title": "Worldly",
+    },
+  ],
+  "startIndex": 0,
+  "term": "vox",
+}
+`;
+
+exports[`search should update the store with the response 1`] = `
+Object {
+  "1042433083": Object {
+    "feedUrl": "https://feeds.megaphone.fm/theweeds",
+    "genre": "Politics",
+    "iTunesUrl": "https://podcasts.apple.com/us/podcast/the-weeds/id1042433083?uo=4",
+    "id": "1042433083",
+    "publisher": Object {
+      "id": "1439215748",
+      "name": "Vox",
+    },
+    "thumbnail": Object {
+      "_100w": "https://is3-ssl.mzstatic.com/image/thumb/Podcasts113/v4/c6/89/4c/c6894cfa-5084-c9fe-3c72-666978686bb4/mza_1739210204902964516.png/100x100bb.jpg",
+      "_30w": "https://is3-ssl.mzstatic.com/image/thumb/Podcasts113/v4/c6/89/4c/c6894cfa-5084-c9fe-3c72-666978686bb4/mza_1739210204902964516.png/30x30bb.jpg",
+      "_600w": "https://is3-ssl.mzstatic.com/image/thumb/Podcasts113/v4/c6/89/4c/c6894cfa-5084-c9fe-3c72-666978686bb4/mza_1739210204902964516.png/600x600bb.jpg",
+      "_60w": "https://is3-ssl.mzstatic.com/image/thumb/Podcasts113/v4/c6/89/4c/c6894cfa-5084-c9fe-3c72-666978686bb4/mza_1739210204902964516.png/60x60bb.jpg",
+    },
+    "title": "The Weeds",
+  },
+  "1081584611": Object {
+    "feedUrl": "https://feeds.megaphone.fm/theezrakleinshow",
+    "genre": "Philosophy",
+    "iTunesUrl": "https://podcasts.apple.com/us/podcast/the-ezra-klein-show/id1081584611?uo=4",
+    "id": "1081584611",
+    "publisher": Object {
+      "id": "1439215748",
+      "name": "Vox",
+    },
+    "thumbnail": Object {
+      "_100w": "https://is4-ssl.mzstatic.com/image/thumb/Podcasts113/v4/7a/17/0f/7a170fc0-97ae-64be-eeb7-9ecf9330581d/mza_1082450096055116974.png/100x100bb.jpg",
+      "_30w": "https://is4-ssl.mzstatic.com/image/thumb/Podcasts113/v4/7a/17/0f/7a170fc0-97ae-64be-eeb7-9ecf9330581d/mza_1082450096055116974.png/30x30bb.jpg",
+      "_600w": "https://is4-ssl.mzstatic.com/image/thumb/Podcasts113/v4/7a/17/0f/7a170fc0-97ae-64be-eeb7-9ecf9330581d/mza_1082450096055116974.png/600x600bb.jpg",
+      "_60w": "https://is4-ssl.mzstatic.com/image/thumb/Podcasts113/v4/7a/17/0f/7a170fc0-97ae-64be-eeb7-9ecf9330581d/mza_1082450096055116974.png/60x60bb.jpg",
+    },
+    "title": "The Ezra Klein Show",
+  },
+  "1248862589": Object {
+    "feedUrl": "https://feeds.megaphone.fm/worldly",
+    "genre": "Politics",
+    "iTunesUrl": "https://podcasts.apple.com/us/podcast/worldly/id1248862589?uo=4",
+    "id": "1248862589",
+    "publisher": Object {
+      "id": "1439215748",
+      "name": "Vox",
+    },
+    "thumbnail": Object {
+      "_100w": "https://is5-ssl.mzstatic.com/image/thumb/Podcasts123/v4/08/2e/07/082e079a-cabf-db62-3fea-a74cc8a1b594/mza_1165648460994853372.png/100x100bb.jpg",
+      "_30w": "https://is5-ssl.mzstatic.com/image/thumb/Podcasts123/v4/08/2e/07/082e079a-cabf-db62-3fea-a74cc8a1b594/mza_1165648460994853372.png/30x30bb.jpg",
+      "_600w": "https://is5-ssl.mzstatic.com/image/thumb/Podcasts123/v4/08/2e/07/082e079a-cabf-db62-3fea-a74cc8a1b594/mza_1165648460994853372.png/600x600bb.jpg",
+      "_60w": "https://is5-ssl.mzstatic.com/image/thumb/Podcasts123/v4/08/2e/07/082e079a-cabf-db62-3fea-a74cc8a1b594/mza_1165648460994853372.png/60x60bb.jpg",
+    },
+    "title": "Worldly",
+  },
+  "1294325824": Object {
+    "feedUrl": "https://feeds.megaphone.fm/impact",
+    "genre": "Documentary",
+    "iTunesUrl": "https://podcasts.apple.com/us/podcast/the-impact/id1294325824?uo=4",
+    "id": "1294325824",
+    "publisher": Object {
+      "id": "1439215748",
+      "name": "Vox",
+    },
+    "thumbnail": Object {
+      "_100w": "https://is2-ssl.mzstatic.com/image/thumb/Podcasts113/v4/24/ef/39/24ef396a-1ae5-6e79-e661-20fdea200f93/mza_3156222670743834797.png/100x100bb.jpg",
+      "_30w": "https://is2-ssl.mzstatic.com/image/thumb/Podcasts113/v4/24/ef/39/24ef396a-1ae5-6e79-e661-20fdea200f93/mza_3156222670743834797.png/30x30bb.jpg",
+      "_600w": "https://is2-ssl.mzstatic.com/image/thumb/Podcasts113/v4/24/ef/39/24ef396a-1ae5-6e79-e661-20fdea200f93/mza_3156222670743834797.png/600x600bb.jpg",
+      "_60w": "https://is2-ssl.mzstatic.com/image/thumb/Podcasts113/v4/24/ef/39/24ef396a-1ae5-6e79-e661-20fdea200f93/mza_3156222670743834797.png/60x60bb.jpg",
+    },
+    "title": "The Impact",
+  },
+  "934552872": Object {
+    "feedUrl": "https://feeds.megaphone.fm/switchedonpop",
+    "genre": "Music Commentary",
+    "iTunesUrl": "https://podcasts.apple.com/us/podcast/switched-on-pop/id934552872?uo=4",
+    "id": "934552872",
+    "publisher": Object {
+      "id": "1439215748",
+      "name": "Vox",
+    },
+    "thumbnail": Object {
+      "_100w": "https://is3-ssl.mzstatic.com/image/thumb/Podcasts123/v4/f3/d1/22/f3d12254-e15b-4b1b-6558-74470f0b93ae/mza_2025196989843407248.png/100x100bb.jpg",
+      "_30w": "https://is3-ssl.mzstatic.com/image/thumb/Podcasts123/v4/f3/d1/22/f3d12254-e15b-4b1b-6558-74470f0b93ae/mza_2025196989843407248.png/30x30bb.jpg",
+      "_600w": "https://is3-ssl.mzstatic.com/image/thumb/Podcasts123/v4/f3/d1/22/f3d12254-e15b-4b1b-6558-74470f0b93ae/mza_2025196989843407248.png/600x600bb.jpg",
+      "_60w": "https://is3-ssl.mzstatic.com/image/thumb/Podcasts123/v4/f3/d1/22/f3d12254-e15b-4b1b-6558-74470f0b93ae/mza_2025196989843407248.png/60x60bb.jpg",
+    },
+    "title": "Switched on Pop",
+  },
+}
+`;

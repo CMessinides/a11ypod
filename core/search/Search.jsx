@@ -1,118 +1,147 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useRef } from "react";
+import PropTypes from "prop-types";
 import Head from "next/head";
-import { useFetch, IfPending, IfFulfilled, IfRejected } from "react-async";
-import uniqBy from "lodash/fp/uniqBy";
+import { useRouter } from "next/router";
+import useSearch, { SearchStatus } from "./useSearch";
 import SearchInput from "./SearchInput";
 import CardStack from "../components/CardStack";
 import PodcastPreview from "../podcasts/PodcastPreview";
-import { graphqlEndpoint } from "../env";
-import { InternalServerError } from "../errors";
 
-import query from "../podcasts/SearchQuery.graphql";
-
-function createQuery(term) {
-	return JSON.stringify({
-		query,
-		variables: { term }
-	});
-}
-
-const INITIAL_DATA = {
-	data: {
-		searchPodcasts: {
-			term: "",
-			startIndex: 0,
-			nextOffset: null,
-			results: []
-		}
-	}
+const SearchStateProps = {
+	term: PropTypes.string.isRequired,
+	results: PropTypes.array.isRequired,
+	status: PropTypes.oneOf(Object.values(SearchStatus)).isRequired,
+	loadMoreResults: PropTypes.func
 };
 
-/**
- * Accepts a GraphQL response for the `searchPodcasts` query and returns
- * its data, error, or both.
- * @param {GraphqlResponse} response
- */
-function unwrap({ data, errors }) {
-	return {
-		data: data && data.searchPodcasts,
-		error:
-			errors && new Error(`${errors[0].extensions.code}: ${errors[0].message}`)
-	};
+function SearchAlertMessage({ term, results, status }) {
+	switch (status) {
+		case SearchStatus.OK:
+			if (!term) {
+				return "Enter a search term to load results.";
+			} else {
+				return `Found ${results.length} ${
+					results.length === 1 ? "result" : "results"
+				} for term "${term}".`;
+			}
+		case SearchStatus.LOADING_NEW:
+			return `Loading results for term "${term}".`;
+		case SearchStatus.FAILED_NEW:
+			return `There was an error retrieving results for term "${term}".`;
+		case SearchStatus.LOADING_MORE:
+			return `Loading more results for term "${term}".`;
+		case SearchStatus.FAILED_MORE:
+			return `There was an error retrieving more results for term "${term}".`;
+		default:
+			throw new Error();
+	}
 }
 
-/**
- * Keep only unique podcasts
- */
-const dedupe = uniqBy("id");
+SearchAlertMessage.propTypes = SearchStateProps;
 
-/**
- * Intercepts actions dispatched by `react-async`'s `useFetch()` hook to
- * handle two special cases:
- * - The fetch fulfilled, but GraphQL returned an error in the body of the
- *   response. In this case, we change the action to "reject" and return the
- *   GraphQL error as the payload.
- * - The fetch fulfilled and the search term in the new data is the same as
- *   the current search term. This happens when the user requests more results
- *   for the same term, in which case we don't want to blow away the existing
- *   results. Therefore, we check whether the old term and new term match, and
- *   if they do, we append the new results to the old. Repeated results are
- *   removed.
- * @type {import("react-async").AsyncOptions<SearchResults>["reducer"]}
- */
-const reducer = (state, action, internalReducer) => {
-	const newAction = { ...action };
-	switch (action.type) {
-		case "fulfill": {
-			const { data, error } = unwrap(action.payload);
-			if (error) {
-				newAction.type = "reject";
-				newAction.payload = new InternalServerError(error.message);
+function SearchResults({ term, results, status, listRef }) {
+	switch (status) {
+		case SearchStatus.LOADING_NEW:
+			return (
+				<div className="page__blurb my-auto text-center" aria-hidden="true">
+					Loading&hellip;
+				</div>
+			);
+		case SearchStatus.FAILED_NEW:
+			return (
+				<div className="page__blurb my-auto text-center" aria-hidden="true">
+					There was an error retrieving the search results. 😔
+				</div>
+			);
+		case SearchStatus.OK:
+		default:
+			if (!term) {
+				return (
+					<div className="page__blurb my-auto text-center" aria-hidden="true">
+						Type a search term above to see results here.
+					</div>
+				);
 			} else {
-				newAction.payload = Object.assign(
-					data,
-					data.term === state.data.term && {
-						results: dedupe([...state.data.results, ...data.results])
-					}
+				return (
+					<>
+						<div className="text-sm text-gray-700 mb-3" aria-hidden="true">
+							Found {results.length}{" "}
+							{results.length === 1 ? "result" : "results"} for &ldquo;
+							{term}&rdquo;
+						</div>
+						<aside className="bg-yellow-300 text-sm p-3 sm:px-6 -mx-3 sm:-mx-6">
+							<strong>🚧 Links to podcasts are coming soon.</strong> For now,
+							search results do not link anywhere else.
+						</aside>
+						<CardStack
+							className="-mx-3 sm:-mx-6"
+							aria-label="Search results"
+							listRef={listRef}
+						>
+							{results.map(podcast => (
+								<PodcastPreview key={podcast.id} {...podcast} />
+							))}
+						</CardStack>
+					</>
 				);
 			}
-			break;
-		}
-		default:
-			break;
 	}
+}
 
-	return internalReducer(state, newAction);
+SearchResults.propTypes = {
+	...SearchStateProps,
+	listRef: PropTypes.object
 };
 
-function Search() {
-	const [term, setTerm] = useState("");
-	const search = useFetch(
-		graphqlEndpoint,
-		{
-			method: "POST",
-			headers: {
-				Accept: "application/json",
-				"Content-Type": "application/json"
-			},
-			body: createQuery(term)
-		},
-		{
-			initialValue: unwrap(INITIAL_DATA).data,
-			reducer
-		}
+function SearchLoadMoreButton({ loadMoreResults, status }) {
+	if (!loadMoreResults) {
+		return null;
+	}
+
+	if (status === SearchStatus.LOADING_MORE) {
+		return <div className="mt-3 sm:mt-6 text-center">Loading&hellip;</div>;
+	}
+
+	return (
+		<div className="mt-3 sm:mt-6 text-center">
+			<button
+				className="button button--secondary button--lg"
+				type="button"
+				onClick={loadMoreResults}
+			>
+				Load more results
+			</button>
+			{status === SearchStatus.FAILED_MORE && (
+				<div className="mt-2 p-2 bg-red-200 text-red-700" aria-hidden="true">
+					There was an error loading more results.
+				</div>
+			)}
+		</div>
 	);
+}
+
+SearchLoadMoreButton.propTypes = SearchStateProps;
+
+function Search({ initialTerm, initialValue }) {
+	const router = useRouter();
+	const state = useSearch({ initialTerm, initialValue });
+	const resultsList = useRef(null);
 
 	useEffect(() => {
-		if (!term) {
-			search.setData(INITIAL_DATA);
-		} else {
-			search.run({ body: createQuery(term) });
+		if (router) {
+			const href = "/search?q=" + state.term;
+			router.replace(href, href, { shallow: true });
 		}
-		return search.cancel;
-	}, [term, search.setData, search.run, search.cancel]);
+	}, [state.term]);
 
-	const onChange = e => setTerm(e.target.value);
+	useEffect(() => {
+		if (resultsList.current && state.focusOnResult !== null) {
+			// focus on the first new result whenever more results are loaded
+			resultsList.current.children[state.focusOnResult].focus();
+		}
+	}, [state.focusOnResult]);
+
+	const onChange = e => state.updateSearchTerm(e.target.value);
 
 	return (
 		<>
@@ -125,7 +154,7 @@ function Search() {
 					<SearchInput
 						id="podcast-search"
 						placeholder="Search podcasts"
-						value={term}
+						value={state.term}
 						onChange={onChange}
 					/>
 				</form>
@@ -135,75 +164,44 @@ function Search() {
 					role="alert"
 					aria-live="polite"
 				>
-					<IfPending state={search}>Loading results.</IfPending>
-					<IfRejected state={search}>
-						There was an error retrieving the search results.
-					</IfRejected>
-					<IfFulfilled state={search}>
-						{({ results, term }) => {
-							if (term) {
-								return `Found ${results.length} ${
-									results.length === 1 ? "result" : "results"
-								} for '${term}'.`;
-							} else {
-								return "Type a search term into the form above to get results.";
-							}
-						}}
-					</IfFulfilled>
+					<SearchAlertMessage {...state} />
 				</div>
-				<IfPending state={search}>
-					<div className="page__blurb my-auto text-center" aria-hidden="true">
-						Loading&hellip;
-					</div>
-				</IfPending>
-				<IfRejected state={search}>
-					<div className="page__blurb my-auto text-center" aria-hidden="true">
-						There was an error retrieving the search results. 😔
-					</div>
-				</IfRejected>
-				<IfFulfilled state={search}>
-					{({ results, term }) => {
-						if (term) {
-							return (
-								<>
-									<div
-										className="text-sm text-gray-700 mb-3"
-										aria-hidden="true"
-									>
-										Found {results.length}{" "}
-										{results.length === 1 ? "result" : "results"} for &ldquo;
-										{term}&rdquo;
-									</div>
-									<aside className="bg-yellow-300 text-sm p-3 sm:px-6 -mx-3 sm:-mx-6">
-										<strong>🚧 Links to podcasts are coming soon.</strong> For
-										now, search results do not link anywhere else.
-									</aside>
-									<CardStack
-										className="-mx-3 sm:-mx-6"
-										aria-label="Search results"
-									>
-										{results.map(podcast => (
-											<PodcastPreview key={podcast.id} {...podcast} />
-										))}
-									</CardStack>
-								</>
-							);
-						} else {
-							return (
-								<div
-									className="page__blurb my-auto text-center"
-									aria-hidden="true"
-								>
-									Type a search term above to see results here.
-								</div>
-							);
-						}
-					}}
-				</IfFulfilled>
+				<SearchResults {...state} listRef={resultsList} />
+				<SearchLoadMoreButton {...state} />
 			</div>
 		</>
 	);
 }
+
+Search.getInitialProps = async function({ query, store }) {
+	const props = {
+		initialTerm: query.q || ""
+	};
+
+	if (props.initialTerm) {
+		const searchPodcasts = store.getActions().podcasts.search;
+		try {
+			props.initialValue = await searchPodcasts({ term: query.q });
+		} catch (e) {
+			props.initialValue = e;
+		}
+	}
+
+	return props;
+};
+
+Search.propTypes = {
+	initialTerm: PropTypes.string,
+	initialValue: PropTypes.oneOfType([
+		PropTypes.shape({
+			term: PropTypes.string.isRequired,
+			startIndex: PropTypes.number.isRequired,
+			nextOffset: PropTypes.number,
+			results: PropTypes.array.isRequired
+		}),
+		PropTypes.instanceOf(Error)
+	])
+};
 
 export default Search;
 

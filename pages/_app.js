@@ -1,3 +1,4 @@
+import "abort-controller/polyfill";
 import React from "react";
 import NextApp from "next/app";
 import NavBar from "../core/nav/Navbar";
@@ -22,10 +23,10 @@ class App extends NextApp {
 			);
 		}
 
-		const pageProps = await super.getInitialProps({ ctx, Component });
+		const props = await super.getInitialProps({ ctx, Component });
 
 		return {
-			...pageProps,
+			...props,
 			initialState: ctx.store.getState()
 		};
 	}
