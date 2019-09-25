@@ -13,9 +13,10 @@ import { createStore } from "../test-helpers";
 jest.mock("isomorphic-unfetch");
 import fetch from "isomorphic-unfetch";
 import { createFetchMocks } from "../test-helpers";
-import mockData from "../podcasts/__fixtures__/gql-search-podcasts.json";
+import mockResultsWithMore from "./__fixtures__/search-results-with-more.json";
+import mockEndOfResults from "./__fixtures__/search-results-end-of-results.json";
 const { mockFetchResolve, mockFetchReject } = createFetchMocks(fetch);
-mockFetchResolve({ json: mockData, once: false });
+mockFetchResolve({ json: mockResultsWithMore, once: false });
 afterEach(fetch.mockClear);
 
 afterEach(cleanup);
@@ -37,9 +38,7 @@ it("should default to an empty state", () => {
 	// The page should render an alert with instructions
 	const alert = getByRole("alert");
 	expect(alert).toHaveAttribute("aria-live", "polite");
-	expect(alert).toHaveTextContent(
-		"Type a search term into the form above to get results."
-	);
+	expect(alert).toHaveTextContent(/Enter a search term/i);
 
 	// The page should render a prompt that is hidden to screen readers (it's redundant with the alert)
 	const prompt = getByText("Type a search term above to see results here.");
@@ -77,6 +76,45 @@ it("should fetch and display search results when the user types a new term", asy
 	expect(alert).toHaveTextContent(/5 results/i);
 });
 
+it("should allow the user to load more results if they exist", async () => {
+	expect.assertions(4);
+
+	// Begin with some results already loaded (eg. from server-rendering)
+	const { Container } = createStore();
+	const { getByText, getByLabelText } = render(
+		<Container>
+			<Search
+				initialTerm="vox"
+				initialValue={mockResultsWithMore.data.searchPodcasts}
+			/>
+		</Container>
+	);
+
+	// The search page should display a "Load More" button, since the mock
+	// GraphQL response indicated that there were more results to load.
+	const loadMoreBtn = getByText(/load more results/i);
+	expect(loadMoreBtn).toBeInTheDocument();
+
+	// Mock the GraphQL service to respond with the last set of results for
+	// this query (i.e. no more results to retriveve).
+	mockFetchResolve({ json: mockEndOfResults });
+
+	// Simulate the user clicking on the Load More button
+	fireEvent.click(loadMoreBtn);
+
+	const resultsList = getByLabelText(/search results/i);
+	await wait(() => {
+		// The list should now contain the previous results + the new results
+		expect(resultsList.children.length).toBe(10);
+	});
+
+	// The focus should be moved to the first of the newly loaded results
+	expect(document.activeElement).toBe(resultsList.children[5]);
+	// The Load More button should now be gone, since there are no more results
+	// to load.
+	expect(loadMoreBtn).not.toBeInTheDocument();
+});
+
 it("should display an error if the search fails", async () => {
 	expect.assertions(1);
 
@@ -100,7 +138,7 @@ it("should display an error if the search fails", async () => {
 	});
 
 	// Return the default mock fetch behavior
-	mockFetchResolve({ json: mockData, once: false });
+	mockFetchResolve({ json: mockResultsWithMore, once: false });
 });
 
 describe("getInitialProps", () => {
@@ -112,7 +150,7 @@ describe("getInitialProps", () => {
 			Search.getInitialProps({ query, store })
 		).resolves.toStrictEqual({
 			initialTerm: "vox",
-			initialValue: mockData.data.searchPodcasts
+			initialValue: mockResultsWithMore.data.searchPodcasts
 		});
 	});
 
@@ -130,20 +168,14 @@ describe("getInitialProps", () => {
 		});
 	});
 
-	it("should return sensible defaults if the query is empty", () => {
+	it("should return no initial value if the query is empty", () => {
 		const query = {};
 		const { store } = createStore();
 
 		return expect(
 			Search.getInitialProps({ query, store })
 		).resolves.toStrictEqual({
-			initialTerm: "",
-			initialValue: {
-				term: "",
-				startIndex: 0,
-				nextOffset: null,
-				results: []
-			}
+			initialTerm: ""
 		});
 	});
 });

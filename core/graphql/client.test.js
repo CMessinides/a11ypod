@@ -57,8 +57,3 @@ it("should throw when fetch errors", () => {
 	mockFetchReject({ reason: error });
 	return expect(fetchGraphql()).rejects.toThrow(error);
 });
-
-it("should not throw when the fetch is aborted", () => {
-	mockFetchReject({ reason: { name: "AbortError" } });
-	return expect(fetchGraphql()).resolves.toBeUndefined();
-});

@@ -1,0 +1,96 @@
+{
+	"data": {
+		"searchPodcasts": {
+			"term": "vox",
+			"startIndex": 5,
+			"nextOffset": null,
+			"results": [
+				{
+					"id": "1210802178",
+					"title": "I Think You're Interesting",
+					"genre": "TV Reviews",
+					"publisher": {
+						"id": "1439215748",
+						"name": "Vox"
+					},
+					"iTunesUrl": "https://podcasts.apple.com/us/podcast/i-think-youre-interesting/id1210802178?uo=4",
+					"feedUrl": "https://feeds.megaphone.fm/ithinkyoureinteresting",
+					"thumbnail": {
+						"_30w": "https://is5-ssl.mzstatic.com/image/thumb/Podcasts123/v4/78/e6/dc/78e6dc55-1c41-b8d6-6c0b-6ee02c0fcb1c/mza_2458197206222672008.png/30x30bb.jpg",
+						"_60w": "https://is5-ssl.mzstatic.com/image/thumb/Podcasts123/v4/78/e6/dc/78e6dc55-1c41-b8d6-6c0b-6ee02c0fcb1c/mza_2458197206222672008.png/60x60bb.jpg",
+						"_100w": "https://is5-ssl.mzstatic.com/image/thumb/Podcasts123/v4/78/e6/dc/78e6dc55-1c41-b8d6-6c0b-6ee02c0fcb1c/mza_2458197206222672008.png/100x100bb.jpg",
+						"_600w": "https://is5-ssl.mzstatic.com/image/thumb/Podcasts123/v4/78/e6/dc/78e6dc55-1c41-b8d6-6c0b-6ee02c0fcb1c/mza_2458197206222672008.png/600x600bb.jpg"
+					}
+				},
+				{
+					"id": "1438157174",
+					"title": "Future Perfect",
+					"genre": "Philosophy",
+					"publisher": {
+						"id": "1439215748",
+						"name": "Vox"
+					},
+					"iTunesUrl": "https://podcasts.apple.com/us/podcast/future-perfect/id1438157174?uo=4",
+					"feedUrl": "https://feeds.megaphone.fm/futureperfect",
+					"thumbnail": {
+						"_30w": "https://is5-ssl.mzstatic.com/image/thumb/Podcasts123/v4/01/69/a6/0169a699-7bfd-c1a4-2323-5fab57620a39/mza_4433840416936287580.png/30x30bb.jpg",
+						"_60w": "https://is5-ssl.mzstatic.com/image/thumb/Podcasts123/v4/01/69/a6/0169a699-7bfd-c1a4-2323-5fab57620a39/mza_4433840416936287580.png/60x60bb.jpg",
+						"_100w": "https://is5-ssl.mzstatic.com/image/thumb/Podcasts123/v4/01/69/a6/0169a699-7bfd-c1a4-2323-5fab57620a39/mza_4433840416936287580.png/100x100bb.jpg",
+						"_600w": "https://is5-ssl.mzstatic.com/image/thumb/Podcasts123/v4/01/69/a6/0169a699-7bfd-c1a4-2323-5fab57620a39/mza_4433840416936287580.png/600x600bb.jpg"
+					}
+				},
+				{
+					"id": "1460319105",
+					"title": "Primetime",
+					"genre": "TV Reviews",
+					"publisher": {
+						"id": "1439215748",
+						"name": "Vox"
+					},
+					"iTunesUrl": "https://podcasts.apple.com/us/podcast/primetime/id1460319105?uo=4",
+					"feedUrl": "https://feeds.megaphone.fm/primetime",
+					"thumbnail": {
+						"_30w": "https://is3-ssl.mzstatic.com/image/thumb/Podcasts123/v4/85/7c/0e/857c0edb-aca0-8f46-8f84-4a1c14e74a3f/mza_5367935943215259933.png/30x30bb.jpg",
+						"_60w": "https://is3-ssl.mzstatic.com/image/thumb/Podcasts123/v4/85/7c/0e/857c0edb-aca0-8f46-8f84-4a1c14e74a3f/mza_5367935943215259933.png/60x60bb.jpg",
+						"_100w": "https://is3-ssl.mzstatic.com/image/thumb/Podcasts123/v4/85/7c/0e/857c0edb-aca0-8f46-8f84-4a1c14e74a3f/mza_5367935943215259933.png/100x100bb.jpg",
+						"_600w": "https://is3-ssl.mzstatic.com/image/thumb/Podcasts123/v4/85/7c/0e/857c0edb-aca0-8f46-8f84-4a1c14e74a3f/mza_5367935943215259933.png/600x600bb.jpg"
+					}
+				},
+				{
+					"id": "1346207297",
+					"title": "Today, Explained",
+					"genre": "Daily News",
+					"publisher": {
+						"id": "1439215748",
+						"name": "Vox and Stitcher"
+					},
+					"iTunesUrl": "https://podcasts.apple.com/us/podcast/today-explained/id1346207297?uo=4",
+					"feedUrl": "https://rss.art19.com/today-explained",
+					"thumbnail": {
+						"_30w": "https://is3-ssl.mzstatic.com/image/thumb/Podcasts123/v4/04/c1/48/04c1486a-6637-00de-6e89-264b48ed82f7/mza_2307228983800890538.jpeg/30x30bb.jpg",
+						"_60w": "https://is3-ssl.mzstatic.com/image/thumb/Podcasts123/v4/04/c1/48/04c1486a-6637-00de-6e89-264b48ed82f7/mza_2307228983800890538.jpeg/60x60bb.jpg",
+						"_100w": "https://is3-ssl.mzstatic.com/image/thumb/Podcasts123/v4/04/c1/48/04c1486a-6637-00de-6e89-264b48ed82f7/mza_2307228983800890538.jpeg/100x100bb.jpg",
+						"_600w": "https://is3-ssl.mzstatic.com/image/thumb/Podcasts123/v4/04/c1/48/04c1486a-6637-00de-6e89-264b48ed82f7/mza_2307228983800890538.jpeg/600x600bb.jpg"
+					}
+				},
+				{
+					"id": "1443675475",
+					"title": "The Veil Audio Drama",
+					"genre": "Performing Arts",
+					"publisher": {
+						"id": null,
+						"name": "Voxx Studios"
+					},
+					"iTunesUrl": "https://podcasts.apple.com/us/podcast/the-veil-audio-drama/id1443675475?uo=4",
+					"feedUrl": "https://theveilaudio.libsyn.com/rss",
+					"thumbnail": {
+						"_30w": "https://is2-ssl.mzstatic.com/image/thumb/Podcasts123/v4/ca/b7/6e/cab76ecf-e0b3-fe2d-1c17-7a1697b679ed/mza_3446169558695366007.png/30x30bb.jpg",
+						"_60w": "https://is2-ssl.mzstatic.com/image/thumb/Podcasts123/v4/ca/b7/6e/cab76ecf-e0b3-fe2d-1c17-7a1697b679ed/mza_3446169558695366007.png/60x60bb.jpg",
+						"_100w": "https://is2-ssl.mzstatic.com/image/thumb/Podcasts123/v4/ca/b7/6e/cab76ecf-e0b3-fe2d-1c17-7a1697b679ed/mza_3446169558695366007.png/100x100bb.jpg",
+						"_600w": "https://is2-ssl.mzstatic.com/image/thumb/Podcasts123/v4/ca/b7/6e/cab76ecf-e0b3-fe2d-1c17-7a1697b679ed/mza_3446169558695366007.png/600x600bb.jpg"
+					}
+				}
+			]
+		}
+	}
+}

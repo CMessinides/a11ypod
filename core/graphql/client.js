@@ -20,20 +20,16 @@ export function initGraphqlRequest({ headers, ...otherConfig } = {}) {
  * @param {RequestInit} config
  */
 export async function fetchGraphql(config = {}) {
-	try {
-		const { data, errors } = await (await fetch(
-			graphqlEndpoint,
-			initGraphqlRequest(config)
-		)).json();
+	const { data, errors } = await (await fetch(
+		graphqlEndpoint,
+		initGraphqlRequest(config)
+	)).json();
 
-		if (errors) {
-			throw new Error(
-				`${errors[0].extensions.code || "UNKNOWN_ERROR"}: ${errors[0].message}`
-			);
-		}
-
-		return data;
-	} catch (e) {
-		if (e.name !== "AbortError") throw e;
+	if (errors) {
+		throw new Error(
+			`${errors[0].extensions.code || "UNKNOWN_ERROR"}: ${errors[0].message}`
+		);
 	}
+
+	return data;
 }

@@ -1,3 +1,4 @@
+import "abort-controller/polyfill";
 import React from "react";
 import NextApp from "next/app";
 import NavBar from "../core/nav/Navbar";

@@ -9,13 +9,13 @@ const PodcastsModel = {
 			state.items[podcast.id] = podcast;
 		}
 	}),
-	search: thunk(async (actions, payload) => {
+	search: thunk(async (actions, { term, offset = 0, signal } = {}) => {
 		const data = await fetchGraphql({
 			body: JSON.stringify({
 				query,
-				variables: { term: payload.term }
+				variables: { term, offset }
 			}),
-			signal: payload.signal
+			signal
 		});
 
 		actions.addBatch(data.searchPodcasts.results);
