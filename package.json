@@ -34,7 +34,7 @@
 	"dependencies": {
 		"@zeit/next-css": "^1.0.1",
 		"abort-controller": "^3.0.0",
-		"apollo-server-express": "^2.9.3",
+		"apollo-server-express": "^2.14.2",
 		"classnames": "^2.2.6",
 		"dotenv": "^8.1.0",
 		"easy-peasy": "^3.0.2",
