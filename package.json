@@ -45,7 +45,7 @@
 		"lodash": "^4.17.15",
 		"lru-cache": "^5.1.1",
 		"memorystore": "^1.6.1",
-		"next": "9.0.5",
+		"next": "11.1.0",
 		"passport": "^0.4.0",
 		"passport-auth0": "^1.2.1",
 		"pg": "^7.12.1",
